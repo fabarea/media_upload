@@ -8,6 +8,9 @@ config.tx_extbase {
 	}
 }
 
+#########################################
+# Upload action configuration
+#########################################
 page_1386871773 = PAGE
 page_1386871773 {
     typeNum = 1386871773
@@ -16,29 +19,23 @@ page_1386871773 {
         admPanel = 0
         disableAllHeaderCode = 1
         additionalHeaders = Content-type:text/json
-
-        # Configuration if you would like to fix prepended domain.
-        # Otherwise typolink get prepended with current domain.
-        #absRefPrefix = http://domain.tld/
     }
-    10 = COA_INT
+    10 = USER_INT
     10 {
-        10 = USER_INT
-        10 {
-            userFunc = tx_extbase_core_bootstrap->run
-            extensionName = MediaUpload
-            pluginName = Pi1
-			switchableControllerActions {
-				MediaUpload {
-					1 = upload
-				}
+        userFunc = tx_extbase_core_bootstrap->run
+        extensionName = MediaUpload
+        pluginName = Pi1
+		switchableControllerActions {
+			MediaUpload {
+				1 = upload
 			}
-        }
+		}
     }
 }
 
-
-
+#########################################
+# Delete action of just uploaded file
+#########################################
 page_1386871774 = PAGE
 page_1386871774 {
     typeNum = 1386871774

@@ -94,7 +94,6 @@
 				}
 			})
 					.on('submit', function(event, id, fileName) {
-						console.log(321);
 						var params = {};
 //						params[parameterPrefix + '[action]'] = 'create';
 //						params[parameterPrefix + '[controller]'] = 'MediaUpload';
@@ -106,14 +105,16 @@
 						var $fileEl = $(this).fineUploader("getItemByFileId", id),
 								$viewBtn = $fileEl.find(".view-btn");
 
-
 						if (responseJSON.success) {
-
 							$viewBtn.show();
 							$viewBtn.removeClass('hide');
 							$viewBtn.attr("href", responseJSON.viewUrl);
 						}
 
+						// inject fileName into reference
+
+
+						// Inject
 						// Code below injected by the server.
 						//%s
 					});
