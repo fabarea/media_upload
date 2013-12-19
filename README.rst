@@ -14,78 +14,52 @@ On the server side, there is an API for file upload which handles transparently 
 
 ::
 
-		# Notice code is simplified from the real implementation.
-		# For more detail check EXT:media/Classes/Controller/AssetController.php @ uploadAction
+		# Notice code is simplified for demo purposes
 
 		/** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-		$uploadManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
-		try {
-			/** @var $uploadedFileObject \TYPO3\CMS\Media\FileUpload\UploadedFileInterface */
-			$uploadedFileObject = $uploadManager->handleUpload();
-		} catch (\Exception $e) {
-			$response = array('error' => $e->getMessage());
-		}
+		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
 
-		$targetFolderObject = \TYPO3\CMS\Media\ObjectFactory::getInstance()->getContainingFolder();
-		$newFileObject = $targetFolderObject->addFile($uploadedFileObject->getFileWithAbsolutePath(), $uploadedFileObject->getName());
+		$uploadedFile = $uploadManager->handleUpload();
+
 
 .. _Fine Uploader: http://fineuploader.com/
 
 
-
-Carousel Widget
+Upload Widget
 -------------------
 
-By default, the View Helper generates a Carousel Gallery based on the markup of `Twitter Bootstrap`_
-and is assuming jQuery to be loaded. Syntax is as follows::
+You can make use of a Media Upload widget. Syntax is as follows::
 
-	# Note categories attribute can be an array categories="{1,3}"
+
 	<mu:widget.mediaUpload />
+
 	{namespace mu=TYPO3\CMS\MediaUpload\ViewHelpers}
+
+	# With some attribute
+	<mu:widget.mediaUpload allowedExtensions="jpg, png" storage="1"/>
 
 
 	# Required attributes:
 	# --------------------
 	#
-	# No attribute is required. However if you don't define a category *all images* will be displayed from the repository. It may take long!!
+	# There are no attribute required.
 
 	# Default values:
 	# ---------------
 	#
-	# Max height of the image
-	# height = 600
+	# The Storage identifier to get some automatic settings, such as allowedExtensions, default NULL.
+	# storage = 1
 	#
-	# Max width of the image
-	# width = 600
+	# Allowed extension to be uploaded, default NULL.
+	# allowedExtensions = "jpg, png"
 	#
-	# Categories to be taken as filter.
-	# categories = array()
+	# Maximum size allowed by the plugin, default 0.
+	# maximumSize =
 	#
-	# Interval value of time between the slides. "O" means no automatic sliding.
-	# interval = 0
+	# The unit used for computing the maximumSize, default Mo.
+	# sizeUnit = Mo
 	#
-	# Whether to display the title and description or not.
-	# caption = true
-	#
-	# The field name to sort out.
-	# sort =
-	#
-	# The direction to sort.
-	# order = asc
+	# Maximum items to be uploaded, default 10.
+	# maximumItems = 10
 
-
-The underlying template can be overridden by TypoScript. The default configuration looks as::
-
-	config.tx_extbase {
-		view {
-			widget {
-				TYPO3\CMS\Media\ViewHelpers\Widget\CarouselViewHelper {
-					# Assuming a template file is under ViewHelpers/Widget/Carousel/Index.html
-					templateRootPath = EXT:media/Resources/Private/Templates
-				}
-			}
-		}
-	}
-
-.. _Twitter Bootstrap: http://twitter.github.io/bootstrap/examples/carousel.html
 
