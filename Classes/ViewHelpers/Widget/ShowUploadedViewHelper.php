@@ -26,10 +26,10 @@ namespace TYPO3\CMS\MediaUpload\ViewHelpers\Widget;
 /**
  * Widget which displays a media upload.
  */
-class MediaUploadViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper {
+class ShowUploadedViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper {
 
 	/**
-	 * @var \TYPO3\CMS\MediaUpload\ViewHelpers\Widget\Controller\MediaUploadController
+	 * @var \TYPO3\CMS\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController
 	 * @inject
 	 */
 	protected $controller;
@@ -38,11 +38,7 @@ class MediaUploadViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetV
 	 * @return void
 	 */
 	public function initializeArguments() {
-		$this->registerArgument('allowedExtensions', 'string', 'Allowed extension to be uploaded.', FALSE, '');
-		$this->registerArgument('maximumSize', 'int', 'Maximum file size in Mo by default.', FALSE, 0);
-		$this->registerArgument('sizeUnit', 'string', 'Whether it is Ko or Mo.', FALSE, 'Mo');
-		$this->registerArgument('storage', 'int', 'The final storage identifier to which the file will be added eventually.', FALSE, 0);
-		$this->registerArgument('maximumItems', 'int', 'Maximum items to be uploaded', FALSE, 10);
+		$this->registerArgument('property', 'int', 'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields', FALSE, '');
 	}
 
 	/**

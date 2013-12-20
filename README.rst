@@ -2,6 +2,11 @@
 Media Upload for TYPO3 CMS
 ============================
 
+Media Upload provides a Fluid widget for uploading a Media on the Frontend. Once selected by the User, the Media will be directly uploaded
+to a temporary space within ``typo3temp``. After the form is posted, uploaded File can be retrieved by an ``UploadService``.
+
+If the form has a "show" step, uploaded images, can be displayed by another widget.
+
 
 File Upload API
 =================
@@ -24,25 +29,54 @@ On the server side, there is an API for file upload which handles transparently 
 
 .. _Fine Uploader: http://fineuploader.com/
 
+Upload Service
+=================
+
+To retrieve the uploaded images within your controller::
+
+	/**
+	 * @var \TYPO3\CMS\MediaUpload\Service\UploadFileService
+	 * @inject
+	 */
+	protected $uploadFileService;
+
+	/**
+	 * @return void
+	 */
+	public function createAction() {
+		$this->uploadFileService->getUploadedFiles()
+	}
+
+
+Security
+=================
+
+It can be tell what FE Group is authorized to upload to what storages (not implemented).
+
+Scheduler tasks
+=================
+
+The space within ``typo3temp`` can be flushed sometimes if User does not finalize their upload (not implemented).
+
 
 Upload Widget
--------------------
+=================
 
 You can make use of a Media Upload widget. Syntax is as follows::
 
 
-	<mu:widget.mediaUpload />
+	<mu:widget.upload storage="1"/>
 
 	{namespace mu=TYPO3\CMS\MediaUpload\ViewHelpers}
 
 	# With some attribute
-	<mu:widget.mediaUpload allowedExtensions="jpg, png" storage="1"/>
+	<mu:widget.upload allowedExtensions="jpg, png" storage="1" property="foo"/>
 
 
 	# Required attributes:
 	# --------------------
 	#
-	# There are no attribute required.
+	# - storage
 
 	# Default values:
 	# ---------------
@@ -50,7 +84,7 @@ You can make use of a Media Upload widget. Syntax is as follows::
 	# The Storage identifier to get some automatic settings, such as allowedExtensions, default NULL.
 	# storage = 1
 	#
-	# Allowed extension to be uploaded, default NULL.
+	# Allowed extension to be uploaded. Override the allowed extension list from the storage. default NULL.
 	# allowedExtensions = "jpg, png"
 	#
 	# Maximum size allowed by the plugin, default 0.
@@ -61,5 +95,18 @@ You can make use of a Media Upload widget. Syntax is as follows::
 	#
 	# Maximum items to be uploaded, default 10.
 	# maximumItems = 10
+	#
+	# The property to be used for retrieving the uploaded images, default NULL.
+	# properties = foo
 
+
+To see the uploaded images in a second step::
+
+	<mu:widget.showUploaded />
+
+	<mu:widget.showUploaded property="foo" />
+
+
+	# The property to be used for retrieving the uploaded images, default NULL.
+	# properties = foo
 

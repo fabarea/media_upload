@@ -1,7 +1,11 @@
 <div>
 
 	<script src="{f:uri.resource(path:'Components/jquery.fineuploader-4.1.0/jquery.fineuploader-4.1.0.js', extensionName: 'media_upload')}"></script>
-	<link rel="stylesheet" href="{f:uri.resource(path:'Components/jquery.fineuploader-4.1.0/fineuploader-4.1.0.css', extensionName: 'media_upload')}"/>
+	<link rel="stylesheet"
+	      href="{f:uri.resource(path:'Components/jquery.fineuploader-4.1.0/fineuploader-4.1.0.css', extensionName: 'media_upload')}"/>
+
+	<input id="uploaded-files-{property}" type="hidden"
+	       name="tx_mediaupload_pi1[uploadedFiles][{property}]" value="{uploadedFileList}" />
 
 	<div id="jquery-wrapped-fine-uploader"></div>
 
@@ -18,7 +22,7 @@
                   <span>Processing dropped files...</span>
                   <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
               </span>
-			<ul class="qq-upload-list-selector qq-upload-list">
+			<ul id="qq-upload-list-{uniqueId}" class="qq-upload-list-selector qq-upload-list">
 				<li>
 					<div class="qq-progress-bar-container-selector">
 						<div class="qq-progress-bar-selector qq-progress-bar"></div>
@@ -81,42 +85,42 @@
 					enabled: true,
 					method: "POST",
 					endpoint: "/index.php",
-					params : {
+					params: {
 						type: 1386871774
 					}
 				},
 
 				request: {
-					endpoint: '/index.php',
-					params: {
-						type: 1386871773
-					}
+					endpoint: '/index.php'
 				}
 			})
 					.on('submit', function(event, id, fileName) {
 						var params = {};
-//						params[parameterPrefix + '[action]'] = 'create';
-//						params[parameterPrefix + '[controller]'] = 'MediaUpload';
-//						params[parameterPrefix + '[storageIdentifier]'] = '123';
-//						params['type'] = '1386871773';
-//						$(this).fineUploader('setParams', params);
+						var parameterPrefix = 'tx_mediaupload_pi1';
+						params[parameterPrefix + '[storageIdentifier]'] = '{storage}';
+						params['type'] = '1386871773';
+						$(this).fineUploader('setParams', params);
 					})
 					.on('complete', function(event, id, fileName, responseJSON) {
+						var uniqueId = '{uniqueId}';
+						var property = '{property}';
 						var $fileEl = $(this).fineUploader("getItemByFileId", id),
 								$viewBtn = $fileEl.find(".view-btn");
 
 						if (responseJSON.success) {
-							$viewBtn.show();
 							$viewBtn.removeClass('hide');
 							$viewBtn.attr("href", responseJSON.viewUrl);
+
+							var uploadedFiles = [];
+							$('#qq-upload-list-' + uniqueId)
+									.find('li.alert-success')
+									.find('.qq-upload-file')
+									.each(function(index, element) {
+										uploadedFiles.push($(element).html());
+									});
+
+							$('#uploaded-files-' + property).val(uploadedFiles.join(','));
 						}
-
-						// inject fileName into reference
-
-
-						// Inject
-						// Code below injected by the server.
-						//%s
 					});
 		});
 	</script>

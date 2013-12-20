@@ -1,0 +1,22 @@
+<div>
+
+	<input id="uploaded-files-{property}" type="hidden"
+	       name="tx_mediaupload_pi1[uploadedFiles][{property}]" value="{uploadedFileList}" />
+
+	<f:if condition="{uploadedFiles}">
+		<ul class="qq-upload-list-selector qq-upload-list">
+			<f:for each="{uploadedFiles}" as="uploadedFile">
+				<li class="alert alert-success">
+					<f:image src="{uploadedFile.path}" width="100" height="75" alt="" class="qq-thumbnail-selector"/>
+					<span class="qq-upload-file-selector qq-upload-file">{uploadedFile.name}</span>
+					<span class="qq-upload-size-selector qq-upload-size">{uploadedFile.size}kB</span>
+					<a class="view-btn btn-small btn-info" target="_blank" href="/{uploadedFile.path}"
+					   style="display: inline;">View</a>
+				</li>
+			</f:for>
+		</ul>
+	</f:if>
+
+</div>
+
+{namespace m=TYPO3\CMS\Media\ViewHelpers}

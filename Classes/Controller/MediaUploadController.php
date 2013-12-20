@@ -22,6 +22,8 @@ namespace TYPO3\CMS\MediaUpload\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Resource\Exception;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,6 +48,18 @@ class MediaUploadController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 	 * @inject
 	 */
 	protected $pageRenderer;
+
+	/**
+	 * Initialize actions. These actions are meant to be called by an logged-in FE User.
+	 */
+	public function initializeAction() {
+
+		// Action below are only allowed when a is logged it.
+		if (empty($this->getFrontendUser()->user)) {
+			$message = 'FE User must be logged-in.';
+			throw new Exception($message, 1387696171);
+		}
+	}
 
 	/**
 	 * Delete a file being just uploaded.
@@ -83,12 +97,16 @@ class MediaUploadController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 	/**
 	 * Handle file upload.
 	 *
+	 * @todo implement validator that Fe Group is allowed to access the storage.
+	 * @param int $storageIdentifier
 	 * @return string
 	 */
-	public function uploadAction() {
+	public function uploadAction($storageIdentifier) {
+
+		$storage = ResourceFactory::getInstance()->getStorageObject($storageIdentifier);
 
 		/** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
+		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager', $storage);
 
 		try {
 			$uploadedFile = $uploadManager->handleUpload();
@@ -109,8 +127,16 @@ class MediaUploadController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 			$result = array('error' => $e->getMessage());
 		}
 
-
 		return json_encode($result);
+	}
+
+	/**
+	 * Returns an instance of the current Frontend User.
+	 *
+	 * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+	 */
+	protected function getFrontendUser() {
+		return $GLOBALS['TSFE']->fe_user;
 	}
 }
 ?>
