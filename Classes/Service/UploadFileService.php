@@ -42,9 +42,10 @@ class UploadFileService {
 	}
 
 	/**
-	 * Return an array of just uploaded files.
+	 * Return an array of uploaded files, done in a previous step.
 	 *
 	 * @param string $property
+	 * @throws \Exception
 	 * @return array
 	 */
 	public function getUploadedFiles($property = '') {
@@ -57,12 +58,34 @@ class UploadFileService {
 			$file = array();
 			$file['name'] = $uploadedFile;
 			$file['path'] = UploadManager::UPLOAD_FOLDER . '/' . $uploadedFile;
+
+			if (!file_exists($file['path'])) {
+				$message = sprintf('I could not find file "%s". Something went wrong in the upload step? Cache wrongly involved?', $file['path']);
+				throw new \Exception($message, 1389550006);
+			}
 			$file['size'] = round(filesize($file['path']) / 1000);
 
 			$files[] = $file;
 		}
 
 		return $files;
+	}
+
+	/**
+	 * Return the first uploaded files, done in a previous step.
+	 *
+	 * @param string $property
+	 * @return array
+	 */
+	public function getUploadedFile($property = '') {
+		$uploadedFile = array();
+
+		$uploadedFiles = $this->getUploadedFiles($property);
+		if (!empty($uploadedFiles)) {
+			$uploadedFile = current($uploadedFiles);
+		}
+
+		return $uploadedFile;
 	}
 
 	/**
@@ -75,4 +98,5 @@ class UploadFileService {
 		return count(GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE));
 	}
 }
+
 ?>
