@@ -24,6 +24,7 @@ namespace TYPO3\CMS\MediaUpload\Service;
  ***************************************************************/
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Media\FileUpload\UploadManager;
+use TYPO3\CMS\MediaUpload\UploadedFile;
 
 /**
  * Uploaded files service.
@@ -46,7 +47,7 @@ class UploadFileService {
 	 *
 	 * @param string $property
 	 * @throws \Exception
-	 * @return array
+	 * @return UploadedFile[]
 	 */
 	public function getUploadedFiles($property = '') {
 
@@ -54,18 +55,23 @@ class UploadFileService {
 		$uploadedFiles = GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE);
 
 		// Convert uploaded files into array
-		foreach ($uploadedFiles as $uploadedFile) {
-			$file = array();
-			$file['name'] = $uploadedFile;
-			$file['path'] = UploadManager::UPLOAD_FOLDER . '/' . $uploadedFile;
+		foreach ($uploadedFiles as $uploadedFileName) {
 
-			if (!file_exists($file['path'])) {
-				$message = sprintf('I could not find file "%s". Something went wrong in the upload step? Cache wrongly involved?', $file['path']);
+			$temporaryFileNameAndPath = UploadManager::UPLOAD_FOLDER . '/' . $uploadedFileName;
+
+			if (!file_exists($temporaryFileNameAndPath)) {
+				$message = sprintf('I could not find file "%s". Something went wrong during the upload? Or is it some cache effect?', $file['path']);
 				throw new \Exception($message, 1389550006);
 			}
-			$file['size'] = round(filesize($file['path']) / 1000);
+			$fileSize = round(filesize($temporaryFileNameAndPath) / 1000);
 
-			$files[] = $file;
+			/** @var \TYPO3\CMS\MediaUpload\UploadedFile $uploadedFile */
+			$uploadedFile = GeneralUtility::makeInstance('TYPO3\CMS\MediaUpload\UploadedFile');
+			$uploadedFile->setTemporaryFileNameAndPath($temporaryFileNameAndPath)
+				->setFileName($uploadedFileName)
+				->setSize($fileSize);
+
+			$files[] = $uploadedFile;
 		}
 
 		return $files;

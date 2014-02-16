@@ -4,8 +4,8 @@
 	<link rel="stylesheet"
 	      href="{f:uri.resource(path:'Components/jquery.fineuploader-4.1.0/fineuploader-4.1.0.css', extensionName: 'media_upload')}"/>
 
-	<input id="uploaded-files-{property}" type="hidden"
-	       name="tx_mediaupload_pi1[uploadedFiles][{property}]" value="{uploadedFileList}" />
+	<input id="uploaded-files-{property}" type="text"
+	       name="tx_mediaupload_pi1[uploadedFiles][{property}]" value="{uploadedFileList}"/>
 
 	<div id="jquery-wrapped-fine-uploader"></div>
 
@@ -60,50 +60,83 @@
 		}
 	</style>
 
-	<script>
+	<script type="application/javascript">
 		$(document).ready(function() {
-			$('#jquery-wrapped-fine-uploader').fineUploader({
-				multiple: true,
-				debug: true,
-				//template: "qq-template-bootstrap",
-				template: "simple-previews-template",
-				classes: {
-					success: 'alert alert-success',
-					fail: 'alert alert-error'
-				},
-				validation: {
-					allowedExtensions: ['{allowedExtensions}'],
-					itemLimit: '{maximumItems}',
-					sizeLimit: '{maximumSize}' // bytes
-				},
-				showMessage: function(message) {
-					alert(message);
-				},
 
-				// optional feature
-				deleteFile: {
-					enabled: true,
-					method: "POST",
-					endpoint: "/index.php",
-					params: {
-						type: 1386871774
-					}
-				},
+			// For not confusing Fluid...
+			var maximumItems= '{maximumItems}';
+			var maximumSize= '{maximumSize}';
+			var storage= '{storage}';
+			var uniqueId= '{uniqueId}';
+			var property= '{property}';
+			var allowedExtensions= ['{allowedExtensions}'];
+			var settings = {
+				maximumItems: maximumItems,
+				maximumSize: maximumSize,
+				storage: storage,
+				uniqueId: uniqueId,
+				property: property,
+				allowedExtensions: allowedExtensions
+			};
 
-				request: {
-					endpoint: '/index.php'
-				}
-			})
-					.on('submit', function(event, id, fileName) {
+
+			$('#jquery-wrapped-fine-uploader')
+					.fineUploader({
+						multiple: true,
+						debug: true,
+						//template: "qq-template-bootstrap",
+						template: "simple-previews-template",
+						classes: {
+							success: 'alert alert-success',
+							fail: 'alert alert-error'
+						},
+						validation: {
+							allowedExtensions: settings.allowedExtensions,
+							itemLimit: settings.maximumItems,
+							sizeLimit: settings.maximumSize // bytes
+						},
+						showMessage: function(message) {
+							alert(message);
+						},
+
+						// optional feature
+						deleteFile: {
+							enabled: true,
+							method: "POST",
+							endpoint: "/index.php",
+							params: {
+								type: 1386871774
+							}
+						},
+						request: {
+							endpoint: '/index.php'
+						}
+					})
+					.on('deleteComplete', function() {
+						// Look up for successful uploaded files and feed a hidden field.
+						var uploadedFiles = [];
+						$('#qq-upload-list-' + settings.uniqueId)
+								.find('li.alert-success')
+								.find('.view-btn')
+								.each(function(index, element) {
+									var uri = $(element).attr('href');
+									var basename = uri.replace(/.*\//, "");
+									uploadedFiles.push(basename);
+								});
+
+						$('#uploaded-files-' + settings.property).val(uploadedFiles.join(','));
+
+					})
+					.on('submit', function() {
 						var params = {};
 						var parameterPrefix = 'tx_mediaupload_pi1';
-						params[parameterPrefix + '[storageIdentifier]'] = '{storage}';
+						params[parameterPrefix + '[storageIdentifier]'] = settings.storage;
 						params['type'] = '1386871773';
 						$(this).fineUploader('setParams', params);
 					})
 					.on('complete', function(event, id, fileName, responseJSON) {
-						var uniqueId = '{uniqueId}';
-						var property = '{property}';
+						var uniqueId = settings.uniqueId;
+						var property = settings.property;
 						var $fileEl = $(this).fineUploader("getItemByFileId", id),
 								$viewBtn = $fileEl.find(".view-btn");
 
@@ -117,7 +150,7 @@
 									.find('li.alert-success')
 									.find('.view-btn')
 									.each(function(index, element) {
-										var uri = $(element).attr('href')
+										var uri = $(element).attr('href');
 										var basename = uri.replace(/.*\//, "");
 										uploadedFiles.push(basename);
 									});

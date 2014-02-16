@@ -76,7 +76,7 @@ class MediaUploadController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCont
 
 		$fileNameAndPath = sprintf('%s/%s', $uploadFolderPath, $fileIdentifier);
 
-		// @todo clean me up $fileIdentifier must be part of the file name and must be not duplicated - time pressure! - it must be changed in EXT: media as well.
+		// @todo clean me up $fileIdentifier must be part of the file name and must be not duplicated - time pressure! - it must be changed in EXT:media as well.
 		$files = glob($fileNameAndPath . '*');
 		$fileWithIdentifier = current($files);
 		if (file_exists($fileWithIdentifier)) {
