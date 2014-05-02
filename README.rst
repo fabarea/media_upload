@@ -1,6 +1,6 @@
-============================
+==========================
 Media Upload for TYPO3 CMS
-============================
+==========================
 
 Media Upload provides a Fluid widget for uploading a Media on the Frontend. Once selected by the User, the Media will be directly uploaded
 to a temporary space within ``typo3temp``. After the form is posted, uploaded File can be retrieved by an ``UploadService``.
@@ -9,7 +9,7 @@ If the form has a "show" step, uploaded images, can be displayed by another widg
 
 
 File Upload API
-=================
+===============
 
 File upload is handled by `Fine Uploader`_ which is a Javascript plugin aiming to bring a user-friendly file-uploading experience over the web.
 The plugin relies on HTML5 technology which enables Drag & Drop from the Desktop. File transfer is achieved by Ajax if supported. If not,
@@ -30,7 +30,7 @@ On the server side, there is an API for file upload which handles transparently 
 .. _Fine Uploader: http://fineuploader.com/
 
 Upload Service
-=================
+==============
 
 To retrieve the uploaded images within your controller::
 
@@ -49,18 +49,18 @@ To retrieve the uploaded images within your controller::
 
 
 Security
-=================
+========
 
 It can be tell what FE Group is authorized to upload to what storages (not implemented).
 
 Scheduler tasks
-=================
+===============
 
 The space within ``typo3temp`` can be flushed sometimes if User does not finalize their upload (not implemented).
 
 
 Upload Widget
-=================
+=============
 
 You can make use of a Media Upload widget. Syntax is as follows::
 
