@@ -23,11 +23,12 @@ namespace TYPO3\CMS\MediaUpload\ViewHelpers\Widget\Controller;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
 
 /**
  * Show uploaded Controller for widget ShowUploaded.
  */
-class ShowUploadedController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController {
+class ShowUploadedController extends AbstractWidgetController {
 
 	/**
 	 * @var \TYPO3\CMS\MediaUpload\Service\UploadFileService
