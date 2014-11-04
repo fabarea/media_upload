@@ -1,10 +1,10 @@
 config.tx_extbase {
 	view {
 		widget {
-			TYPO3\CMS\MediaUpload\ViewHelpers\Widget\UploadViewHelper {
+			Fab\MediaUpload\ViewHelpers\Widget\UploadViewHelper {
 				templateRootPath = EXT:media_upload/Resources/Private/Templates
 			}
-			TYPO3\CMS\MediaUpload\ViewHelpers\Widget\ShowUploadedViewHelper {
+			Fab\MediaUpload\ViewHelpers\Widget\ShowUploadedViewHelper {
                 templateRootPath = EXT:media_upload/Resources/Private/Templates
             }
 		}

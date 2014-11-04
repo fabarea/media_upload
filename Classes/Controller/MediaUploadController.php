@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\MediaUpload\Controller;
+namespace Fab\MediaUpload\Controller;
 
 /**
  * This file is part of the TYPO3 CMS project.

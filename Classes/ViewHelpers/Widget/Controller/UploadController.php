@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\MediaUpload\ViewHelpers\Widget\Controller;
+namespace Fab\MediaUpload\ViewHelpers\Widget\Controller;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -24,7 +24,7 @@ use TYPO3\CMS\Media\Utility\PermissionUtility;
 class UploadController extends AbstractWidgetController {
 
 	/**
-	 * @var \TYPO3\CMS\MediaUpload\Service\UploadFileService
+	 * @var \Fab\MediaUpload\Service\UploadFileService
 	 * @inject
 	 */
 	protected $uploadFileService;

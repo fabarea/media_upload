@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\MediaUpload\ViewHelpers\Widget;
+namespace Fab\MediaUpload\ViewHelpers\Widget;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -22,7 +22,7 @@ use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
 class UploadViewHelper extends AbstractWidgetViewHelper {
 
 	/**
-	 * @var \TYPO3\CMS\MediaUpload\ViewHelpers\Widget\Controller\UploadController
+	 * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\UploadController
 	 * @inject
 	 */
 	protected $controller;

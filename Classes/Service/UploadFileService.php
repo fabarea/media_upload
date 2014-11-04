@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\CMS\MediaUpload\Service;
+namespace Fab\MediaUpload\Service;
 
 /**
  * This file is part of the TYPO3 CMS project.
@@ -16,7 +16,7 @@ namespace TYPO3\CMS\MediaUpload\Service;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Media\FileUpload\UploadManager;
-use TYPO3\CMS\MediaUpload\UploadedFile;
+use Fab\MediaUpload\UploadedFile;
 
 /**
  * Uploaded files service.
@@ -57,8 +57,8 @@ class UploadFileService {
 			}
 			$fileSize = round(filesize($temporaryFileNameAndPath) / 1000);
 
-			/** @var \TYPO3\CMS\MediaUpload\UploadedFile $uploadedFile */
-			$uploadedFile = GeneralUtility::makeInstance('TYPO3\CMS\MediaUpload\UploadedFile');
+			/** @var \Fab\MediaUpload\UploadedFile $uploadedFile */
+			$uploadedFile = GeneralUtility::makeInstance('Fab\MediaUpload\UploadedFile');
 			$uploadedFile->setTemporaryFileNameAndPath($temporaryFileNameAndPath)
 				->setFileName($uploadedFileName)
 				->setSize($fileSize);
