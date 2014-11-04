@@ -43,5 +43,3 @@ $EM_CONF[$_EXTKEY] = array (
   'user' => 'fab1en',
   'comment' => '',
 );
-
-?>
