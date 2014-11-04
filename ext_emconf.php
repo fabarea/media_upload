@@ -10,7 +10,7 @@
 
 $EM_CONF[$_EXTKEY] = array (
   'title' => 'Media Upload',
-  'description' => 'Upload Media on the Frontend',
+  'description' => 'Fluid widget for (mass) uploading media on the Frontend using HTML5 techniques powered by Fine Uploader - http://fineuploader.com/',
   'category' => 'fe',
   'author' => 'Fabien Udriot',
   'author_email' => 'fabien.udriot@typo3.org',
@@ -24,16 +24,13 @@ $EM_CONF[$_EXTKEY] = array (
   'modify_tables' => '',
   'clearCacheOnLoad' => 0,
   'lockType' => '',
-  'version' => '0.1.0-dev',
+  'version' => '1.0.0-dev',
   'constraints' =>
   array (
     'depends' =>
     array (
-      'cms' => '',
-      'extbase' => '',
-      'fluid' => '',
-      'media' => '3.0.0-3.99.99',
-      'typo3' => '6.1.1-6.2.99',
+      'media' => '',
+      'typo3' => '6.2.0-6.2.99',
     ),
     'conflicts' =>
     array (

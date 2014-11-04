@@ -1,0 +1,12 @@
+{
+	"name": "fab/media-upload",
+	"type": "typo3-cms-extension",
+	"description": "Fluid widget for (mass) uploading media on the Frontend using HTML5 techniques powered by Fine Uploader - http://fineuploader.com/",
+	"homepage": "https://github.com/fudriot/media_upload",
+	"license": ["GPL-2.0+"],
+	"keywords": ["TYPO3 CMS", "file upload", "media"],
+	"support": {
+		"issues": "https://github.com/fudriot/media_upload/issues"
+	},
+	"version": "1.0.0-dev"
+}
