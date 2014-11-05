@@ -19,10 +19,9 @@ a fall back method with classical file upload is used by posting the file. (Thou
 Installation
 ============
 
-The installation can be completed in two step. Install the extension as normal in the Extension Manager.
-Secondly load the JavaScript / CSS to your setup. The extension assumes jQuery to be loaded. There are several possible files::
-
-The Build include the Fine Upload library as well custom code::
+The installation is completed in two steps. Install the extension as normal in the Extension Manager.
+Then, load the JavaScript / CSS for the pages that will contain the upload widget.
+The extension assumes jQuery to be loaded::
 
 
 	# CSS
@@ -30,51 +29,6 @@ The Build include the Fine Upload library as well custom code::
 
 	# JavaScript
 	EXT:media_upload/Resources/Public/Build/media_upload.min.js
-
-
-File Upload API
-===============
-
-On the server side, there is an API for file upload which handles transparently whether the file come from an XHR request or a Post request.
-
-::
-
-		# Notice code is simplified for demo purposes
-
-		/** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
-
-		$uploadedFile = $uploadManager->handleUpload();
-
-
-Upload Service
-==============
-
-To retrieve the uploaded images within your controller::
-
-	/**
-	 * @var \Fab\MediaUpload\Service\UploadFileService
-	 * @inject
-	 */
-	protected $uploadFileService;
-
-	/**
-	 * @return void
-	 */
-	public function createAction() {
-		$this->uploadFileService->getUploadedFiles()
-	}
-
-
-Security
-========
-
-It can be tell what FE Group is authorized to upload to what storages (not implemented).
-
-Scheduler tasks
-===============
-
-The space within ``typo3temp`` can be flushed sometimes if User does not finalize their upload (not implemented).
 
 
 Upload Widget
@@ -127,6 +81,72 @@ To see the uploaded images in a second step::
 
 	# The property to be used for retrieving the uploaded images, default NULL.
 	# properties = foo
+
+
+Upload Service
+==============
+
+Once files have been uploaded on the Frontend and are placed in a temporary directory, we have to
+to retrieve them and store them into their final location. This code can be used in your controller::
+
+	/**
+	 * @var \Fab\MediaUpload\Service\UploadFileService
+	 * @inject
+	 */
+	protected $uploadFileService;
+
+	/**
+	 * @return void
+	 */
+	public function createAction() {
+
+		/** @var array $uploadedFiles */
+		$uploadedFiles = $this->uploadFileService->getUploadedFiles()
+
+		# A property name is needed in case specified in the Fluid Widget
+		# <mu:widget.upload property="foo"/>
+		$uploadedFiles = $this->uploadFileService->getUploadedFiles('foo')
+
+		# Process uploaded files and move them into a Resource Storage (FAL)
+		foreach($uploadedFiles as $uploadedFile) {
+
+			/** @var \Fab\MediaUpload\UploadedFile $uploadedFile */
+			$uploadedFile->getTemporaryFileNameAndPath();
+
+			$storage = ResourceFactory::getInstance()->getStorageObject(1);
+
+			/** @var File $file */
+			$file = $storage->addUploadedFile(
+				$uploadedFile->getTemporaryFileNameAndPath(),
+				$storage->getRootLevelFolder(),
+				$uploadedFile->getFileName(),
+				'changeName'
+			);
+
+			// Create File Reference
+			...
+		}
+	}
+
+
+Security
+========
+
+Only logged-in FE User are authorized to upload files.
+
+Scheduler tasks
+===============
+
+The temporary files contained within ``typo3temp`` can be flushed from time to time.
+It could be files are left aside if the user has not finalized the upload.
+The Command can be used via a scheduler task with a low redundancy, once per week as instance::
+
+	# List all temporary files
+	./typo3/cli_dispatch.phpsh extbase temporaryFile:list
+
+	# Remove them.
+	./typo3/cli_dispatch.phpsh extbase temporaryFile:flush
+
 
 Build assets
 ============

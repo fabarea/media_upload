@@ -52,7 +52,10 @@ class UploadFileService {
 			$temporaryFileNameAndPath = UploadManager::UPLOAD_FOLDER . '/' . $uploadedFileName;
 
 			if (!file_exists($temporaryFileNameAndPath)) {
-				$message = sprintf('I could not find file "%s". Something went wrong during the upload? Or is it some cache effect?', $file['path']);
+				$message = sprintf(
+					'I could not find file "%s". Something went wrong during the upload? Or is it some cache effect?',
+					$temporaryFileNameAndPath
+				);
 				throw new \Exception($message, 1389550006);
 			}
 			$fileSize = round(filesize($temporaryFileNameAndPath) / 1000);
@@ -95,4 +98,5 @@ class UploadFileService {
 	public function countUploadedFiles($property = '') {
 		return count(GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE));
 	}
+
 }

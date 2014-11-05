@@ -38,7 +38,7 @@ page_1386871773 {
 }
 
 #########################################
-# Delete action of just uploaded file
+# Delete action of uploaded file
 #########################################
 page_1386871774 = PAGE
 page_1386871774 {
