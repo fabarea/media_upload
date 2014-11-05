@@ -25,21 +25,34 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class MediaUploadController extends ActionController {
 
 	/**
-	 * @var \TYPO3\CMS\Core\Page\PageRenderer
-	 * @inject
-	 */
-	protected $pageRenderer;
-
-	/**
 	 * Initialize actions. These actions are meant to be called by an logged-in FE User.
 	 */
 	public function initializeAction() {
 
-		// Action below are only allowed when a is logged it.
-		if (empty($this->getFrontendUser()->user)) {
-			$message = 'FE User must be logged-in.';
-			throw new Exception($message, 1387696171);
+		// Check permission before executing any action.
+		$allowedFrontendGroups = trim($this->settings['allowedFrontendGroups']);
+		if ($allowedFrontendGroups === '*') {
+			if (empty($this->getFrontendUser()->user)) {
+				throw new Exception('FE User must be logged-in.', 1387696171);
+			}
+		} elseif (!empty($allowedFrontendGroups)) {
+
+			$isAllowed = FALSE;
+			$frontendGroups = GeneralUtility::trimExplode(',', $allowedFrontendGroups, TRUE);
+			foreach ($frontendGroups as $frontendGroup) {
+				if (GeneralUtility::inList($this->getFrontendUser()->user['usergroup'], $frontendGroup)) {
+					$isAllowed = TRUE;
+					break;
+				}
+			}
+
+			// Throw exception if not allowed
+			if (!$isAllowed) {
+				throw new Exception('FE User does not have enough permission.', 1415211931);
+			}
 		}
+
+		$this->emitBeforeUploadSignal();
 	}
 
 	/**
@@ -118,5 +131,24 @@ class MediaUploadController extends ActionController {
 	 */
 	protected function getFrontendUser() {
 		return $GLOBALS['TSFE']->fe_user;
+	}
+
+	/**
+	 * Signal that is emitted before upload processing is called.
+	 *
+	 * @return void
+	 * @signal
+	 */
+	protected function emitBeforeUploadSignal() {
+		$this->getSignalSlotDispatcher()->dispatch('Fab\MediaUpload\Controller\MediaUploadController', 'beforeUpload');
+	}
+
+	/**
+	 * Get the SignalSlot dispatcher.
+	 *
+	 * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+	 */
+	protected function getSignalSlotDispatcher() {
+		return $this->objectManager->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
 	}
 }

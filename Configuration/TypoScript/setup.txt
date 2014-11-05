@@ -11,6 +11,19 @@ config.tx_extbase {
 	}
 }
 
+plugin.tx_mediaupload {
+
+	settings {
+
+		# Notice the possibles values::
+		#
+		# "*", means every authenticated User can upload. (default)
+		# "1,2", means every User belonging of Frontend Groups 1 and 2 are allowed.
+		# no value, everybody can upload. No authentication is required. Caution!!
+		allowedFrontendGroups = *
+	}
+}
+
 #########################################
 # Upload action configuration
 #########################################

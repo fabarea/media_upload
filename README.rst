@@ -132,7 +132,22 @@ to retrieve them and store them into their final location. This code can be used
 Security
 ========
 
-Only logged-in FE User are authorized to upload files.
+By default Media Upload require a Frontend User to be authenticated. This can be adjusted according to your needs by selecting
+only allowed Frontend User Group. This behaviour can be configured by TypoScript.
+
+::
+
+	plugin.tx_mediaupload {
+
+		settings {
+
+			# "*", means every authenticated User can upload. (default)
+			# "1,2", means every User belonging of Frontend Groups 1 and 2 are allowed.
+			# no value, everybody can upload. No authentication is required. Caution!!
+
+			allowedFrontendGroups = *
+		}
+	}
 
 Scheduler tasks
 ===============
