@@ -28,6 +28,7 @@
 							itemLimit: settings.maximumItems,
 							sizeLimit: settings.maximumSize // bytes
 						},
+						messages: settings.messages,
 						showMessage: function(message) {
 							alert(message);
 						},

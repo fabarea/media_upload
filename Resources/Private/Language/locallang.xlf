@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="" product-name="local lang module">
+		<header/>
+		<body>
+			<trans-unit id="fineUploader.message.errorType">
+				<source>{file} has an invalid extension. Valid extension(s): {extensions}.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.sizeError">
+				<source>{file} is too large, maximum file size is {sizeLimit}.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.minSizeError">
+				<source>{file} is too small, minimum file size is {minSizeLimit}.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.emptyError">
+				<source>{file} is empty, please select files again without it.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.noFilesError">
+				<source>No files to upload.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.tooManyItemsError">
+				<source>Too many items ({netItems}) would be uploaded.  Item limit is {itemLimit}.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.maxHeightImageError">
+				<source>Image is too tall.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.maxWidthImageError">
+				<source>Image is too wide.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.minHeightImageError">
+				<source>Image is not tall enough.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.minWidthImageError">
+				<source>Image is not wide enough.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.retryFailTooManyItems">
+				<source>Retry failed - you have reached your file limit.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.onLeave">
+				<source>The files are being uploaded, if you leave now the upload will be canceled.</source>
+			</trans-unit>
+			<trans-unit id="fineUploader.message.unsupportedBrowserIos8Safari">
+				<source>Unrecoverable error - this browser does not permit file uploading of any kind due to serious bugs in iOS8 Safari.  Please use iOS8 Chrome until Apple fixes these issues.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -52,6 +52,20 @@
 		var property= '{property}';
 		var allowedExtensions= ['{allowedExtensions}'];
 
+		var typeError = "{f:translate(key: 'fineUploader.message.errorType')}";
+		var sizeError = "{f:translate(key: 'fineUploader.message.sizeError')}";
+		var minSizeError = "{f:translate(key: 'fineUploader.message.minSizeError')}";
+		var emptyError = "{f:translate(key: 'fineUploader.message.emptyError')}";
+		var noFilesError = "{f:translate(key: 'fineUploader.message.noFilesError')}";
+		var tooManyItemsError = "{f:translate(key: 'fineUploader.message.tooManyItemsError')}";
+		var maxHeightImageError = "{f:translate(key: 'fineUploader.message.maxHeightImageError')}";
+		var maxWidthImageError = "{f:translate(key: 'fineUploader.message.maxWidthImageError')}";
+		var minHeightImageError = "{f:translate(key: 'fineUploader.message.minHeightImageError')}";
+		var minWidthImageError = "{f:translate(key: 'fineUploader.message.minWidthImageError')}";
+		var retryFailTooManyItems = "{f:translate(key: 'fineUploader.message.retryFailTooManyItems')}";
+		var onLeave = "{f:translate(key: 'fineUploader.message.onLeave')}";
+		var unsupportedBrowserIos8Safari = "{f:translate(key: 'fineUploader.message.unsupportedBrowserIos8Safari')}";
+
 
 		<![CDATA[
 		if (window.MediaUpload === undefined) {
@@ -68,7 +82,23 @@
 				storage: storage,
 				uniqueId: uniqueId,
 				property: property,
-				allowedExtensions: allowedExtensions
+				allowedExtensions: allowedExtensions,
+				messages: {
+					typeError: typeError,
+					sizeError: sizeError,
+					minSizeError: minSizeError,
+					emptyError: emptyError,
+					noFilesError: noFilesError,
+					tooManyItemsError: tooManyItemsError,
+					maxHeightImageError: maxHeightImageError,
+					maxWidthImageError: maxWidthImageError,
+					minHeightImageError: minHeightImageError,
+					minWidthImageError: minWidthImageError,
+					retryFailTooManyItems: retryFailTooManyItems,
+					onLeave: retryFailTooManyItems,
+					unsupportedBrowserIos8Safari: unsupportedBrowserIos8Safari
+				}
+
 			}
 		};
 		MediaUpload.instances.push(instance);
