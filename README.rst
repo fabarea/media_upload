@@ -2,18 +2,21 @@
 Media Upload for TYPO3 CMS
 ==========================
 
-Media Upload provides a Fluid widget for uploading a Media on the Frontend. Once selected by the User, the Media will be directly uploaded
-to a temporary space within ``typo3temp``. After the form is posted, uploaded File can be retrieved by an ``UploadService``.
+This extension for `TYPO3 CMS`_ provides a Fluid widget for (mass) uploading media on the Frontend using HTML5 techniques.
+Once selected by the User, the Media will be directly uploaded to a temporary space within ``typo3temp``.
+After the form is posted, uploaded File can be retrieved by an ``UploadService``.
 
-If the form has a "show" step, uploaded images, can be displayed by another widget.
+If the form has a "show" step before the final submission, the uploaded images can be displayed by another widget.
 
+The file upload is handled by Fine Uploader which is a Javascript plugin aiming to bring a user-friendly file-uploading experience over the web.
+The plugin relies on HTML5 technology which enables Drag & Drop from the Desktop. File transfer is achieved by Ajax if supported. If not,
+a fall back method with classical file upload is used by posting the file. (Though, the legacy approach still need to be tested more thoroughly).
+
+.. _Fine Uploader: http://fineuploader.com/
+.. _TYPO3 CMS: http://composer.typo3.org/
 
 File Upload API
 ===============
-
-File upload is handled by `Fine Uploader`_ which is a Javascript plugin aiming to bring a user-friendly file-uploading experience over the web.
-The plugin relies on HTML5 technology which enables Drag & Drop from the Desktop. File transfer is achieved by Ajax if supported. If not,
-a fall back method with classical file upload is used by posting the file. (Though, the legacy approach still need to be tested more thoroughly).
 
 On the server side, there is an API for file upload which handles transparently whether the file come from an XHR request or a Post request.
 
@@ -27,7 +30,18 @@ On the server side, there is an API for file upload which handles transparently 
 		$uploadedFile = $uploadManager->handleUpload();
 
 
-.. _Fine Uploader: http://fineuploader.com/
+Installation
+============
+
+The installation can be completed in two step. Install the extension as normal in the Extension Manager.
+Secondly load the JavaScript / CSS to your setup. The extension assumes jQuery to be loaded. There are several possible files::
+
+	# CSS
+	EXT:media_upload/Resources/Public/Components/jquery.fineuploader-4.1.0/fineuploader-4.1.0.css
+
+	# JavaScript
+	EXT:media_upload/Resources/Public/Components/jquery.fineuploader-4.1.0/jquery.fineuploader-4.1.0.js
+
 
 Upload Service
 ==============
@@ -35,7 +49,7 @@ Upload Service
 To retrieve the uploaded images within your controller::
 
 	/**
-	 * @var \TYPO3\CMS\MediaUpload\Service\UploadFileService
+	 * @var \Fab\MediaUpload\Service\UploadFileService
 	 * @inject
 	 */
 	protected $uploadFileService;
@@ -67,7 +81,7 @@ You can make use of a Media Upload widget. Syntax is as follows::
 
 	<mu:widget.upload storage="1"/>
 
-	{namespace mu=TYPO3\CMS\MediaUpload\ViewHelpers}
+	{namespace mu=Fab\MediaUpload\ViewHelpers}
 
 	# With some attribute
 	<mu:widget.upload allowedExtensions="jpg, png" storage="1" property="foo"/>
