@@ -15,6 +15,23 @@ a fall back method with classical file upload is used by posting the file. (Thou
 .. _Fine Uploader: http://fineuploader.com/
 .. _TYPO3 CMS: http://composer.typo3.org/
 
+
+Installation
+============
+
+The installation can be completed in two step. Install the extension as normal in the Extension Manager.
+Secondly load the JavaScript / CSS to your setup. The extension assumes jQuery to be loaded. There are several possible files::
+
+The Build include the Fine Upload library as well custom code::
+
+
+	# CSS
+	EXT:media_upload/Resources/Public/Build/media_upload.min.css
+
+	# JavaScript
+	EXT:media_upload/Resources/Public/Build/media_upload.min.js
+
+
 File Upload API
 ===============
 
@@ -28,19 +45,6 @@ On the server side, there is an API for file upload which handles transparently 
 		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
 
 		$uploadedFile = $uploadManager->handleUpload();
-
-
-Installation
-============
-
-The installation can be completed in two step. Install the extension as normal in the Extension Manager.
-Secondly load the JavaScript / CSS to your setup. The extension assumes jQuery to be loaded. There are several possible files::
-
-	# CSS
-	EXT:media_upload/Resources/Public/Components/jquery.fineuploader-4.1.0/fineuploader-4.1.0.css
-
-	# JavaScript
-	EXT:media_upload/Resources/Public/Components/jquery.fineuploader-4.1.0/jquery.fineuploader-4.1.0.js
 
 
 Upload Service
@@ -124,3 +128,29 @@ To see the uploaded images in a second step::
 	# The property to be used for retrieving the uploaded images, default NULL.
 	# properties = foo
 
+Build assets
+============
+
+The extension provides a JS / CSS bundle which included all the necessary code. If you need to make a new build for those JS / CSS files,
+consider that `Bower`_ and `Grunt`_ must be installed on your system as prerequisite.
+
+Install the required Web Components::
+
+	cd typo3conf/ext/media_upload
+	bower install
+	npm install
+
+Then you must build Fine Uploader from the source::
+
+	cd Resources/Public/WebComponents/fine-uploader
+	npm install
+	grunt package
+
+Finally, you can run the Grunt of the extension to generate a build::
+
+	cd typo3conf/ext/media_upload
+	grunt build
+
+
+.. _Bower: http://bower.io/
+.. _Grunt: http://gruntjs.com/
