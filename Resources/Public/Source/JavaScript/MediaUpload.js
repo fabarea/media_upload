@@ -1,3 +1,6 @@
+/**
+ * Media Upload
+ */
 (function($) {
 	$(function() {
 
