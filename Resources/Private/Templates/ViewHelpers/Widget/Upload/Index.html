@@ -1,13 +1,9 @@
 <div>
 
-	<script src="{f:uri.resource(path:'Components/jquery.fineuploader-4.1.0/jquery.fineuploader-4.1.0.js', extensionName: 'media_upload')}"></script>
-	<link rel="stylesheet"
-	      href="{f:uri.resource(path:'Components/jquery.fineuploader-4.1.0/fineuploader-4.1.0.css', extensionName: 'media_upload')}"/>
-
 	<input id="uploaded-files-{property}" type="hidden"
 	       name="tx_mediaupload_pi1[uploadedFiles][{property}]" value="{uploadedFileList}"/>
 
-	<div id="jquery-wrapped-fine-uploader"></div>
+	<div id="jquery-wrapped-fine-uploader-{widgetIdentifier}"></div>
 
 	<script type="text/template" id="simple-previews-template">
 		<div class="qq-uploader-selector qq-uploader">
@@ -45,120 +41,40 @@
 		</div>
 	</script>
 
-	<style>
-		/* For the bootstrapped demos */
-		li.alert-success {
-			background-color: #DFF0D8;
-		}
-
-		li.alert-error {
-			background-color: #F2DEDE;
-		}
-
-		.alert-error .qq-upload-failed-text {
-			display: inline;
-		}
-	</style>
-
 	<script type="application/javascript">
-		$(document).ready(function() {
 
-			// For not confusing Fluid...
-			var maximumItems= '{maximumItems}';
-			var maximumSize= '{maximumSize}';
-			var storage= '{storage}';
-			var uniqueId= '{uniqueId}';
-			var property= '{property}';
-			var allowedExtensions= ['{allowedExtensions}'];
-			var settings = {
+		// For not confusing Fluid...
+		var uploadWidgetIdentifier= '{widgetIdentifier}';
+		var maximumItems= '{maximumItems}';
+		var maximumSize= '{maximumSize}';
+		var storage= '{storage}';
+		var uniqueId= '{uniqueId}';
+		var property= '{property}';
+		var allowedExtensions= ['{allowedExtensions}'];
+
+
+		<![CDATA[
+		if (window.MediaUpload === undefined) {
+			window.MediaUpload = {
+				instances: []
+			};
+		}
+
+		var instance = {
+			id: uploadWidgetIdentifier,
+			settings: {
 				maximumItems: maximumItems,
 				maximumSize: maximumSize,
 				storage: storage,
 				uniqueId: uniqueId,
 				property: property,
 				allowedExtensions: allowedExtensions
-			};
+			}
+		};
+		MediaUpload.instances.push(instance);
 
+		]]>
 
-			$('#jquery-wrapped-fine-uploader')
-					.fineUploader({
-						multiple: true,
-						debug: true,
-						//template: "qq-template-bootstrap",
-						template: "simple-previews-template",
-						classes: {
-							success: 'alert alert-success',
-							fail: 'alert alert-error'
-						},
-						validation: {
-							allowedExtensions: settings.allowedExtensions,
-							itemLimit: settings.maximumItems,
-							sizeLimit: settings.maximumSize // bytes
-						},
-						showMessage: function(message) {
-							alert(message);
-						},
-
-						// optional feature
-						deleteFile: {
-							enabled: true,
-							method: "POST",
-							endpoint: "/index.php",
-							params: {
-								type: 1386871774
-							}
-						},
-						request: {
-							endpoint: '/index.php'
-						}
-					})
-					.on('deleteComplete', function() {
-						// Look up for successful uploaded files and feed a hidden field.
-						var uploadedFiles = [];
-						$('#qq-upload-list-' + settings.uniqueId)
-								.find('li.alert-success')
-								.find('.view-btn')
-								.each(function(index, element) {
-									var uri = $(element).attr('href');
-									var basename = uri.replace(/.*\//, "");
-									uploadedFiles.push(basename);
-								});
-
-						$('#uploaded-files-' + settings.property).val(uploadedFiles.join(','));
-
-					})
-					.on('submit', function() {
-						var params = {};
-						var parameterPrefix = 'tx_mediaupload_pi1';
-						params[parameterPrefix + '[storageIdentifier]'] = settings.storage;
-						params['type'] = '1386871773';
-						$(this).fineUploader('setParams', params);
-					})
-					.on('complete', function(event, id, fileName, responseJSON) {
-						var uniqueId = settings.uniqueId;
-						var property = settings.property;
-						var $fileEl = $(this).fineUploader("getItemByFileId", id),
-								$viewBtn = $fileEl.find(".view-btn");
-
-						if (responseJSON.success) {
-							$viewBtn.removeClass('hide');
-							$viewBtn.attr("href", responseJSON.viewUrl);
-
-							// Look up for successful uploaded files and feed a hidden field.
-							var uploadedFiles = [];
-							$('#qq-upload-list-' + uniqueId)
-									.find('li.alert-success')
-									.find('.view-btn')
-									.each(function(index, element) {
-										var uri = $(element).attr('href');
-										var basename = uri.replace(/.*\//, "");
-										uploadedFiles.push(basename);
-									});
-
-							$('#uploaded-files-' + property).val(uploadedFiles.join(','));
-						}
-					});
-		});
 	</script>
 </div>
 

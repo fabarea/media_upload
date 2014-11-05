@@ -44,6 +44,7 @@ class UploadController extends AbstractWidgetController {
 		$this->view->assign('property', $property);
 		$this->view->assign('maximumItems', $this->widgetConfiguration['maximumItems']);
 		$this->view->assign('uploadedFileList', $this->uploadFileService->getUploadedFileList($property));
+		$this->view->assign('widgetIdentifier', uniqid());
 	}
 
 	/**
