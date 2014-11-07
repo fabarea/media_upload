@@ -163,28 +163,40 @@ The Command can be used via a scheduler task with a low redundancy, once per wee
 	./typo3/cli_dispatch.phpsh extbase temporaryFile:flush
 
 
-Build assets
-============
+Building assets in development
+==============================
 
-The extension provides a JS / CSS bundle which included all the necessary code. If you need to make a new build for those JS / CSS files,
+The extension provides JS / CSS bundles which included all the necessary code. If you need to make a new build for those JS / CSS files,
 consider that `Bower`_ and `Grunt`_ must be installed on your system as prerequisite.
 
 Install the required Web Components::
 
-	cd typo3conf/ext/media_upload
+	cd typo3conf/ext/media
+
+	# This will populate the directory Resources/Public/WebComponents.
 	bower install
+
+	# Install the necessary NodeJS package.
 	npm install
 
 Then you must build Fine Uploader from the source::
 
 	cd Resources/Public/WebComponents/fine-uploader
+
+	# Install the necessary NodeJS package inside "fine-uploader".
 	npm install
+
+	# Do the packaging works. It will create a "_dist" directory containing the build.
 	grunt package
 
 Finally, you can run the Grunt of the extension to generate a build::
 
-	cd typo3conf/ext/media_upload
+	cd typo3conf/ext/media
 	grunt build
+
+While developing, you can use the ``watch`` which will generate the build as you edit files::
+
+	grunt watch
 
 
 .. _Bower: http://bower.io/
