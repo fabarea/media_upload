@@ -1,73 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="" product-name="local lang module">
+	<file source-language="en" datatype="plaintext" original="messages" date="" product-name="local lang module" target-language="fr">
 		<header/>
 		<body>
 			<trans-unit id="fineUploader.message.errorType">
 				<source>{file} has an invalid extension. Valid extension(s): {extensions}.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.sizeError">
 				<source>{file} is too large, maximum file size is {sizeLimit}.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.minSizeError">
 				<source>{file} is too small, minimum file size is {minSizeLimit}.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.emptyError">
 				<source>{file} is empty, please select files again without it.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.noFilesError">
 				<source>No files to upload.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.tooManyItemsError">
 				<source>Too many items ({netItems}) would be uploaded.  Item limit is {itemLimit}.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.maxHeightImageError">
 				<source>Image is too tall.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.maxWidthImageError">
 				<source>Image is too wide.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.minHeightImageError">
 				<source>Image is not tall enough.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.minWidthImageError">
 				<source>Image is not wide enough.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.retryFailTooManyItems">
 				<source>Retry failed - you have reached your file limit.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.onLeave">
 				<source>The files are being uploaded, if you leave now the upload will be canceled.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.message.unsupportedBrowserIos8Safari">
 				<source>Unrecoverable error - this browser does not permit file uploading of any kind due to serious bugs in iOS8 Safari.  Please use iOS8 Chrome until Apple fixes these issues.</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.cancel">
 				<source>Cancel</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.retry">
 				<source>Retry</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.delete">
 				<source>Delete</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.pause">
 				<source>Pause</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.continue">
 				<source>Continue</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.view">
 				<source>View</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.processingDropFiles">
 				<source>Processing dropped files...</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.dropFilesHere">
 				<source>Drop files here to upload...</source>
+				<target></target>
 			</trans-unit>
 			<trans-unit id="fineUploader.uploadFile">
 				<source>Upload a file</source>
+				<target></target>
 			</trans-unit>
 		</body>
 	</file>
