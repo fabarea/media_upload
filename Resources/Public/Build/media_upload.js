@@ -11166,6 +11166,7 @@ qq.FilenameEditHandler = function(s, inheritedInternalApi) {
 (function($) {
 	$(function() {
 
+
 		/**
 		 * Ony works if MediaUpload is defined.
 		 */
@@ -11179,8 +11180,7 @@ qq.FilenameEditHandler = function(s, inheritedInternalApi) {
 					.fineUploader({
 						multiple: true,
 						debug: true,
-						//template: "qq-template-bootstrap",
-						template: "simple-previews-template",
+						template: "media-upload-template",
 						classes: {
 							success: 'alert alert-success',
 							fail: 'alert alert-error'
@@ -11254,8 +11254,9 @@ qq.FilenameEditHandler = function(s, inheritedInternalApi) {
 							$('#uploaded-files-' + property).val(uploadedFiles.join(','));
 						}
 					});
-			}
-		}
+			} // end for
+		} // end if
+
 
 	});
 })(jQuery);

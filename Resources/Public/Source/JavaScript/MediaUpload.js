@@ -4,6 +4,7 @@
 (function($) {
 	$(function() {
 
+
 		/**
 		 * Ony works if MediaUpload is defined.
 		 */
@@ -17,8 +18,7 @@
 					.fineUploader({
 						multiple: true,
 						debug: true,
-						//template: "qq-template-bootstrap",
-						template: "simple-previews-template",
+						template: "media-upload-template",
 						classes: {
 							success: 'alert alert-success',
 							fail: 'alert alert-error'
@@ -92,8 +92,9 @@
 							$('#uploaded-files-' + property).val(uploadedFiles.join(','));
 						}
 					});
-			}
-		}
+			} // end for
+		} // end if
+
 
 	});
 })(jQuery);
