@@ -29,6 +29,7 @@ class MediaUploadController extends ActionController {
 	 */
 	public function initializeAction() {
 
+		// Perhaps it should go into a validator?
 		// Check permission before executing any action.
 		$allowedFrontendGroups = trim($this->settings['allowedFrontendGroups']);
 		if ($allowedFrontendGroups === '*') {
@@ -52,7 +53,7 @@ class MediaUploadController extends ActionController {
 			}
 		}
 
-		$this->emitBeforeUploadSignal();
+		$this->emitBeforeHandleUploadSignal();
 	}
 
 	/**
@@ -70,16 +71,10 @@ class MediaUploadController extends ActionController {
 
 		$fileNameAndPath = sprintf('%s/%s', $uploadFolderPath, $fileIdentifier);
 
-		// @todo clean me up $fileIdentifier must be part of the file name and must be not duplicated - time pressure! - it must be changed in EXT:media as well.
 		$files = glob($fileNameAndPath . '*');
 		$fileWithIdentifier = current($files);
 		if (file_exists($fileWithIdentifier)) {
 			unlink($fileWithIdentifier);
-		}
-
-		$file = str_replace($fileIdentifier . '-', '', $fileWithIdentifier);
-		if (file_exists($file)) {
-			unlink($file);
 		}
 
 		$result = array(
@@ -91,7 +86,6 @@ class MediaUploadController extends ActionController {
 	/**
 	 * Handle file upload.
 	 *
-	 * @todo implement validator that Fe Group is allowed to access the storage.
 	 * @param int $storageIdentifier
 	 * @return string
 	 */
@@ -109,14 +103,6 @@ class MediaUploadController extends ActionController {
 				'success' => TRUE,
 				'viewUrl' => $uploadedFile->getPublicUrl(),
 			);
-
-			// @todo clean me up $fileIdentifier must be part of the file name and must be not duplicated - time pressure! - it must be changed in EXT: media as well.
-			// @todo rename getName() by getSanitizeName()
-			// Create duplicate to be able to delete
-			$fileIdentifier = GeneralUtility::_POST('qquuid');
-			$duplicate = sprintf('%s/%s-%s', $uploadManager->getUploadFolder(), $fileIdentifier, $uploadedFile->getName());
-			copy($uploadedFile->getFileWithAbsolutePath(), $duplicate);
-
 		} catch (\Exception $e) {
 			$result = array('error' => $e->getMessage());
 		}
@@ -139,8 +125,8 @@ class MediaUploadController extends ActionController {
 	 * @return void
 	 * @signal
 	 */
-	protected function emitBeforeUploadSignal() {
-		$this->getSignalSlotDispatcher()->dispatch('Fab\MediaUpload\Controller\MediaUploadController', 'beforeUpload');
+	protected function emitBeforeHandleUploadSignal() {
+		$this->getSignalSlotDispatcher()->dispatch('Fab\MediaUpload\Controller\MediaUploadController', 'beforeHandleUpload');
 	}
 
 	/**
