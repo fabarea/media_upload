@@ -34,6 +34,13 @@ class UploadedFile {
 	protected $fileName;
 
 	/**
+	 * The sanitized final file name for FE display.
+	 *
+	 * @var string
+	 */
+	protected $sanitizedFileName;
+
+	/**
 	 * Size of the file if available.
 	 *
 	 * @var int
@@ -86,6 +93,13 @@ class UploadedFile {
 	 */
 	public function getTemporaryFileNameAndPath() {
 		return $this->temporaryFileNameAndPath;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSanitizedFileName() {
+		return preg_replace('/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}-/', '', $this->fileName);
 	}
 
 }
