@@ -13,7 +13,14 @@ The plugin relies on HTML5 technology which enables Drag & Drop from the Desktop
 a fall back method with classical file upload is used by posting the file. (Though, the legacy approach still need to be tested more thoroughly).
 
 .. _Fine Uploader: http://fineuploader.com/
-.. _TYPO3 CMS: http://composer.typo3.org/
+.. _TYPO3 CMS: http://typo3.org/
+
+
+TODO
+====
+
+* Remove dependency to Media
+* Add screenshot
 
 
 Installation
@@ -128,6 +135,56 @@ to retrieve them and store them into their final location. This code can be used
 		}
 	}
 
+
+
+File Configuration in FAL
+=========================
+
+How to configure a field / property of type File?
+
+SQL
+---
+
+::
+
+	CREATE TABLE tx_domain_model_foo (
+	        images varchar(255) DEFAULT '' NOT NULL,
+	);
+
+
+TCA
+---
+
+::
+
+	$TCA['tx_domain_model_foo'] = array(
+        'images' => array(
+                'label' => 'Images',
+                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
+                    'images',
+                    array(
+                        'appearance' => array(
+                                'createNewRelationLinkTitle' => 'LLL:EXT:cms/locallang_ttc.xlf:images.addFileReference'
+                        ),
+                    'minitems' => 0,
+                    'maxitems' => 1,
+                ),
+                $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
+            ),
+        ),
+);
+
+
+Extbase
+-------
+
+::
+
+	/**
+      * Files
+      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+      */
+    protected $files;
 
 Security
 ========
