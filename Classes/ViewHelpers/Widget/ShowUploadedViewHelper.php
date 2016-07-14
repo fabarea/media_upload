@@ -19,27 +19,30 @@ use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
 /**
  * Widget which displays a media upload.
  */
-class ShowUploadedViewHelper extends AbstractWidgetViewHelper {
+class ShowUploadedViewHelper extends AbstractWidgetViewHelper
+{
 
-	/**
-	 * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController
-	 * @inject
-	 */
-	protected $controller;
+    /**
+     * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController
+     * @inject
+     */
+    protected $controller;
 
-	/**
-	 * @return void
-	 */
-	public function initializeArguments() {
-		$this->registerArgument('property', 'int', 'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields', FALSE, '');
-	}
+    /**
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('property', 'int', 'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields', FALSE, '');
+    }
 
-	/**
-	 * Returns an carousel widget
-	 *
-	 * @return string
-	 */
-	public function render() {
-		return $this->initiateSubRequest();
-	}
+    /**
+     * Returns an carousel widget
+     *
+     * @return string
+     */
+    public function render()
+    {
+        return $this->initiateSubRequest();
+    }
 }

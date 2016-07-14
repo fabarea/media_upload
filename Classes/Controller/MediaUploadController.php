@@ -22,119 +22,126 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 /**
  * Controller which handles actions related to Asset.
  */
-class MediaUploadController extends ActionController {
+class MediaUploadController extends ActionController
+{
 
-	/**
-	 * Initialize actions. These actions are meant to be called by an logged-in FE User.
-	 */
-	public function initializeAction() {
+    /**
+     * Initialize actions. These actions are meant to be called by an logged-in FE User.
+     */
+    public function initializeAction()
+    {
 
-		// Perhaps it should go into a validator?
-		// Check permission before executing any action.
-		$allowedFrontendGroups = trim($this->settings['allowedFrontendGroups']);
-		if ($allowedFrontendGroups === '*') {
-			if (empty($this->getFrontendUser()->user)) {
-				throw new Exception('FE User must be logged-in.', 1387696171);
-			}
-		} elseif (!empty($allowedFrontendGroups)) {
+        // Perhaps it should go into a validator?
+        // Check permission before executing any action.
+        $allowedFrontendGroups = trim($this->settings['allowedFrontendGroups']);
+        if ($allowedFrontendGroups === '*') {
+            if (empty($this->getFrontendUser()->user)) {
+                throw new Exception('FE User must be logged-in.', 1387696171);
+            }
+        } elseif (!empty($allowedFrontendGroups)) {
 
-			$isAllowed = FALSE;
-			$frontendGroups = GeneralUtility::trimExplode(',', $allowedFrontendGroups, TRUE);
-			foreach ($frontendGroups as $frontendGroup) {
-				if (GeneralUtility::inList($this->getFrontendUser()->user['usergroup'], $frontendGroup)) {
-					$isAllowed = TRUE;
-					break;
-				}
-			}
+            $isAllowed = FALSE;
+            $frontendGroups = GeneralUtility::trimExplode(',', $allowedFrontendGroups, TRUE);
+            foreach ($frontendGroups as $frontendGroup) {
+                if (GeneralUtility::inList($this->getFrontendUser()->user['usergroup'], $frontendGroup)) {
+                    $isAllowed = TRUE;
+                    break;
+                }
+            }
 
-			// Throw exception if not allowed
-			if (!$isAllowed) {
-				throw new Exception('FE User does not have enough permission.', 1415211931);
-			}
-		}
+            // Throw exception if not allowed
+            if (!$isAllowed) {
+                throw new Exception('FE User does not have enough permission.', 1415211931);
+            }
+        }
 
-		$this->emitBeforeHandleUploadSignal();
-	}
+        $this->emitBeforeHandleUploadSignal();
+    }
 
-	/**
-	 * Delete a file being just uploaded.
-	 *
-	 * @return string
-	 */
-	public function deleteAction() {
+    /**
+     * Delete a file being just uploaded.
+     *
+     * @return string
+     */
+    public function deleteAction()
+    {
 
-		$fileIdentifier = GeneralUtility::_POST('qquuid');
+        $fileIdentifier = GeneralUtility::_POST('qquuid');
 
-		/** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
-		$uploadFolderPath = $uploadManager->getUploadFolder();
+        /** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
+        $uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
+        $uploadFolderPath = $uploadManager->getUploadFolder();
 
-		$fileNameAndPath = sprintf('%s/%s', $uploadFolderPath, $fileIdentifier);
+        $fileNameAndPath = sprintf('%s/%s', $uploadFolderPath, $fileIdentifier);
 
-		$files = glob($fileNameAndPath . '*');
-		$fileWithIdentifier = current($files);
-		if (file_exists($fileWithIdentifier)) {
-			unlink($fileWithIdentifier);
-		}
+        $files = glob($fileNameAndPath . '*');
+        $fileWithIdentifier = current($files);
+        if (file_exists($fileWithIdentifier)) {
+            unlink($fileWithIdentifier);
+        }
 
-		$result = array(
-			'success' => TRUE,
-		);
-		return json_encode($result);
-	}
+        $result = array(
+            'success' => TRUE,
+        );
+        return json_encode($result);
+    }
 
-	/**
-	 * Handle file upload.
-	 *
-	 * @param int $storageIdentifier
-	 * @return string
-	 */
-	public function uploadAction($storageIdentifier) {
+    /**
+     * Handle file upload.
+     *
+     * @param int $storageIdentifier
+     * @return string
+     */
+    public function uploadAction($storageIdentifier)
+    {
 
-		$storage = ResourceFactory::getInstance()->getStorageObject($storageIdentifier);
+        $storage = ResourceFactory::getInstance()->getStorageObject($storageIdentifier);
 
-		/** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-		$uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager', $storage);
+        /** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
+        $uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager', $storage);
 
-		try {
-			$uploadedFile = $uploadManager->handleUpload();
+        try {
+            $uploadedFile = $uploadManager->handleUpload();
 
-			$result = array(
-				'success' => TRUE,
-				'viewUrl' => $uploadedFile->getPublicUrl(),
-			);
-		} catch (\Exception $e) {
-			$result = array('error' => $e->getMessage());
-		}
+            $result = array(
+                'success' => TRUE,
+                'viewUrl' => $uploadedFile->getPublicUrl(),
+            );
+        } catch (\Exception $e) {
+            $result = array('error' => $e->getMessage());
+        }
 
-		return json_encode($result);
-	}
+        return json_encode($result);
+    }
 
-	/**
-	 * Returns an instance of the current Frontend User.
-	 *
-	 * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
-	 */
-	protected function getFrontendUser() {
-		return $GLOBALS['TSFE']->fe_user;
-	}
+    /**
+     * Returns an instance of the current Frontend User.
+     *
+     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+     */
+    protected function getFrontendUser()
+    {
+        return $GLOBALS['TSFE']->fe_user;
+    }
 
-	/**
-	 * Signal that is emitted before upload processing is called.
-	 *
-	 * @return void
-	 * @signal
-	 */
-	protected function emitBeforeHandleUploadSignal() {
-		$this->getSignalSlotDispatcher()->dispatch('Fab\MediaUpload\Controller\MediaUploadController', 'beforeHandleUpload');
-	}
+    /**
+     * Signal that is emitted before upload processing is called.
+     *
+     * @return void
+     * @signal
+     */
+    protected function emitBeforeHandleUploadSignal()
+    {
+        $this->getSignalSlotDispatcher()->dispatch('Fab\MediaUpload\Controller\MediaUploadController', 'beforeHandleUpload');
+    }
 
-	/**
-	 * Get the SignalSlot dispatcher.
-	 *
-	 * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
-	 */
-	protected function getSignalSlotDispatcher() {
-		return $this->objectManager->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
-	}
+    /**
+     * Get the SignalSlot dispatcher.
+     *
+     * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+     */
+    protected function getSignalSlotDispatcher()
+    {
+        return $this->objectManager->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
+    }
 }
