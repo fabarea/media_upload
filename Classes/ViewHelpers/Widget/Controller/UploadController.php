@@ -16,7 +16,6 @@ namespace Fab\MediaUpload\ViewHelpers\Widget\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
-use TYPO3\CMS\Media\Utility\PermissionUtility;
 
 /**
  * MediaUpload Controller for widget Upload.
@@ -79,7 +78,7 @@ class UploadController extends AbstractWidgetController
         if (!empty($this->widgetConfiguration['maximumSize'])) {
             $maximumSize = $this->widgetConfiguration['maximumSize'];
 
-            if ($this->widgetConfiguration['sizeUnit'] == 'Ko') {
+            if ($this->widgetConfiguration['sizeUnit'] === 'Ko') {
                 $maximumSize = $maximumSize * 1024;
             } else {
                 $maximumSize = $maximumSize * pow(1024, 2);

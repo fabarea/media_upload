@@ -14,10 +14,12 @@ namespace Fab\MediaUpload\Controller;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Fab\MediaUploader\FileUpload\UploadManager;
 use TYPO3\CMS\Core\Resource\Exception;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Controller which handles actions related to Asset.
@@ -27,6 +29,8 @@ class MediaUploadController extends ActionController
 
     /**
      * Initialize actions. These actions are meant to be called by an logged-in FE User.
+     * @throws \TYPO3\CMS\Core\Resource\Exception
+     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      */
     public function initializeAction()
     {
@@ -62,14 +66,15 @@ class MediaUploadController extends ActionController
      * Delete a file being just uploaded.
      *
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function deleteAction()
     {
 
+        // todo security!!
         $fileIdentifier = GeneralUtility::_POST('qquuid');
 
-        /** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-        $uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager');
+        $uploadManager = GeneralUtility::makeInstance(UploadManager::class);
         $uploadFolderPath = $uploadManager->getUploadFolder();
 
         $fileNameAndPath = sprintf('%s/%s', $uploadFolderPath, $fileIdentifier);
@@ -80,9 +85,9 @@ class MediaUploadController extends ActionController
             unlink($fileWithIdentifier);
         }
 
-        $result = array(
-            'success' => TRUE,
-        );
+        $result = [
+            'success' => true,
+        ];
         return json_encode($result);
     }
 
@@ -91,14 +96,15 @@ class MediaUploadController extends ActionController
      *
      * @param int $storageIdentifier
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function uploadAction($storageIdentifier)
     {
 
         $storage = ResourceFactory::getInstance()->getStorageObject($storageIdentifier);
 
-        /** @var $uploadManager \TYPO3\CMS\Media\FileUpload\UploadManager */
-        $uploadManager = GeneralUtility::makeInstance('TYPO3\CMS\Media\FileUpload\UploadManager', $storage);
+        /** @var $uploadManager UploadManager */
+        $uploadManager = GeneralUtility::makeInstance(UploadManager::class, $storage);
 
         try {
             $uploadedFile = $uploadManager->handleUpload();
@@ -128,20 +134,21 @@ class MediaUploadController extends ActionController
      * Signal that is emitted before upload processing is called.
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      * @signal
      */
     protected function emitBeforeHandleUploadSignal()
     {
-        $this->getSignalSlotDispatcher()->dispatch('Fab\MediaUpload\Controller\MediaUploadController', 'beforeHandleUpload');
+        $this->getSignalSlotDispatcher()->dispatch(MediaUploadController::class, 'beforeHandleUpload');
     }
 
     /**
      * Get the SignalSlot dispatcher.
      *
-     * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+     * @return Dispatcher
      */
     protected function getSignalSlotDispatcher()
     {
-        return $this->objectManager->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
+        return $this->objectManager->get(Dispatcher::class);
     }
 }

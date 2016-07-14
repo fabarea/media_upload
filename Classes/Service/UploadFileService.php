@@ -14,8 +14,8 @@ namespace Fab\MediaUpload\Service;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Fab\MediaUploader\FileUpload\UploadManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Media\FileUpload\UploadManager;
 use Fab\MediaUpload\UploadedFile;
 
 /**

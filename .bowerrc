@@ -1,4 +1,3 @@
 {
-  "directory": "Resources/Public/WebComponents",
-  "json": "bower.json"
+  "directory": "Resources/Public/WebComponents"
 }

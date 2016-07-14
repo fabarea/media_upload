@@ -15,8 +15,8 @@ namespace Fab\MediaUpload\Command;
  */
 
 use DirectoryIterator;
+use Fab\MediaUploader\FileUpload\UploadManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
-use TYPO3\CMS\Media\FileUpload\UploadManager;
 
 /**
  * Command Controller which handles actions related to Temporary Files.
