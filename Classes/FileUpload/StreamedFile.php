@@ -1,20 +1,13 @@
 <?php
 namespace Fab\MediaUploader\FileUpload;
 
-/**
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
+/*
+ * This file is part of the Fab/MediaUpload project under GPLv2 or later.
  *
  * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
+ * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\MediaUploader\Exception\EmptyPropertyException;
 
 /**
  * Handle file uploads via XMLHttpRequest.
@@ -42,18 +35,18 @@ class StreamedFile extends \Fab\MediaUploader\FileUpload\UploadedFileAbstract
     /**
      * Save the file to the specified path
      *
-     * @throws EmptyPropertyException
      * @return boolean TRUE on success
+     * @throws \RuntimeException
      */
     public function save()
     {
 
         if (is_null($this->uploadFolder)) {
-            throw new EmptyPropertyException('Upload folder is not defined', 1361787579);
+            throw new \RuntimeException('Upload folder is not defined', 1361787579);
         }
 
         if (is_null($this->name)) {
-            throw new EmptyPropertyException('File name is not defined', 1361787580);
+            throw new \RuntimeException('File name is not defined', 1361787580);
         }
 
         $input = fopen("php://input", "r");
