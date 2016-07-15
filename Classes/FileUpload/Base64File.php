@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload;
+namespace Fab\MediaUpload\FileUpload;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -13,7 +13,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Handle a posted file encoded in base 64.
  */
-class Base64File extends \Fab\MediaUploader\FileUpload\UploadedFileAbstract
+class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
 {
 
     /**
@@ -42,7 +42,7 @@ class Base64File extends \Fab\MediaUploader\FileUpload\UploadedFileAbstract
     protected $extension;
 
     /**
-     * @return \Fab\MediaUploader\FileUpload\Base64File
+     * @return \Fab\MediaUpload\FileUpload\Base64File
      */
     public function __construct()
     {
@@ -71,18 +71,18 @@ class Base64File extends \Fab\MediaUploader\FileUpload\UploadedFileAbstract
     /**
      * Save the file to the specified path
      *
-     * @throws \Fab\MediaUploader\Exception\EmptyPropertyException
+     * @throws \Fab\MediaUpload\Exception\EmptyPropertyException
      * @return boolean TRUE on success
      */
     public function save()
     {
 
         if (is_null($this->uploadFolder)) {
-            throw new \Fab\MediaUploader\Exception\EmptyPropertyException('Upload folder is not defined', 1362587741);
+            throw new \Fab\MediaUpload\Exception\EmptyPropertyException('Upload folder is not defined', 1362587741);
         }
 
         if (is_null($this->name)) {
-            throw new \Fab\MediaUploader\Exception\EmptyPropertyException('File name is not defined', 1362587742);
+            throw new \Fab\MediaUpload\Exception\EmptyPropertyException('File name is not defined', 1362587742);
         }
 
         return file_put_contents($this->getFileWithAbsolutePath(), $this->image) > 0;

@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload\Optimizer;
+namespace Fab\MediaUpload\FileUpload\Optimizer;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.

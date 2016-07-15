@@ -8,7 +8,7 @@ namespace Fab\MediaUpload\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\MediaUploader\FileUpload\UploadManager;
+use Fab\MediaUpload\FileUpload\UploadManager;
 use TYPO3\CMS\Core\Resource\Exception;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

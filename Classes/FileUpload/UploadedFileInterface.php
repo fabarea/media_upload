@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload;
+namespace Fab\MediaUpload\FileUpload;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -74,7 +74,7 @@ interface UploadedFileInterface
      * Set the file input name from the DOM.
      *
      * @param string $inputName
-     * @return \Fab\MediaUploader\FileUpload\UploadedFileInterface
+     * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      */
     public function setInputName($inputName);
 
@@ -82,7 +82,7 @@ interface UploadedFileInterface
      * Set the upload folder
      *
      * @param string $uploadFolder
-     * @return \Fab\MediaUploader\FileUpload\UploadedFileInterface
+     * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      */
     public function setUploadFolder($uploadFolder);
 
@@ -90,7 +90,7 @@ interface UploadedFileInterface
      * Set the file name to be saved
      *
      * @param string $name
-     * @return \Fab\MediaUploader\FileUpload\UploadedFileInterface
+     * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      */
     public function setName($name);
 }

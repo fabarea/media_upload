@@ -9,7 +9,7 @@ namespace Fab\MediaUpload\Command;
  */
 
 use DirectoryIterator;
-use Fab\MediaUploader\FileUpload\UploadManager;
+use Fab\MediaUpload\FileUpload\UploadManager;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**

@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload\Optimizer;
+namespace Fab\MediaUpload\FileUpload\Optimizer;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -8,9 +8,9 @@ namespace Fab\MediaUploader\FileUpload\Optimizer;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\MediaUploader\Module\MediaModule;
+use Fab\MediaUpload\Module\MediaModule;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\MediaUploader\FileUpload\ImageOptimizerInterface;
+use Fab\MediaUpload\FileUpload\ImageOptimizerInterface;
 
 /**
  * Class that optimize an image according to some settings.
@@ -43,8 +43,8 @@ class Resize implements ImageOptimizerInterface
     /**
      * Optimize the given uploaded image.
      *
-     * @param \Fab\MediaUploader\FileUpload\UploadedFileInterface $uploadedFile
-     * @return \Fab\MediaUploader\FileUpload\UploadedFileInterface
+     * @param \Fab\MediaUpload\FileUpload\UploadedFileInterface $uploadedFile
+     * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      */
     public function optimize($uploadedFile)
     {
@@ -65,8 +65,8 @@ class Resize implements ImageOptimizerInterface
 
         if (strlen($storageRecord['maximum_dimension_original_image']) > 0) {
 
-            /** @var \Fab\MediaUploader\Dimension $imageDimension */
-            $imageDimension = GeneralUtility::makeInstance('Fab\MediaUploader\Dimension', $storageRecord['maximum_dimension_original_image']);
+            /** @var \Fab\MediaUpload\Dimension $imageDimension */
+            $imageDimension = GeneralUtility::makeInstance('Fab\MediaUpload\Dimension', $storageRecord['maximum_dimension_original_image']);
             if ($currentWidth > $imageDimension->getWidth() || $currentHeight > $imageDimension->getHeight()) {
 
                 // resize taking the width as reference
@@ -129,7 +129,7 @@ class Resize implements ImageOptimizerInterface
      */
     protected function getMediaModule()
     {
-        return GeneralUtility::makeInstance('Fab\MediaUploader\Module\MediaModule');
+        return GeneralUtility::makeInstance('Fab\MediaUpload\Module\MediaModule');
     }
 
 }

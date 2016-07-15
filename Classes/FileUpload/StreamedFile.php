@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload;
+namespace Fab\MediaUpload\FileUpload;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -14,7 +14,7 @@ namespace Fab\MediaUploader\FileUpload;
  *
  * @see original implementation: https://github.com/valums/file-uploader/blob/master/server/php.php
  */
-class StreamedFile extends \Fab\MediaUploader\FileUpload\UploadedFileAbstract
+class StreamedFile extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
 {
 
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload;
+namespace Fab\MediaUpload\FileUpload;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -10,7 +10,7 @@ namespace Fab\MediaUploader\FileUpload;
 
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\MediaUploader\Exception\MissingFileException;
+use Fab\MediaUpload\Exception\MissingFileException;
 
 /**
  * An abstract class for uploaded file.

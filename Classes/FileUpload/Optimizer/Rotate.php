@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUploader\FileUpload\Optimizer;
+namespace Fab\MediaUpload\FileUpload\Optimizer;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -8,7 +8,7 @@ namespace Fab\MediaUploader\FileUpload\Optimizer;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\MediaUploader\FileUpload\ImageOptimizerInterface;
+use Fab\MediaUpload\FileUpload\ImageOptimizerInterface;
 
 /**
  * Class that optimize an image according to some settings.
@@ -22,7 +22,7 @@ class Rotate implements ImageOptimizerInterface
     protected $gifCreator;
 
     /**
-     * @return \Fab\MediaUploader\FileUpload\Optimizer\Rotate
+     * @return \Fab\MediaUpload\FileUpload\Optimizer\Rotate
      */
     public function __construct()
     {
@@ -34,8 +34,8 @@ class Rotate implements ImageOptimizerInterface
     /**
      * Optimize the given uploaded image
      *
-     * @param \Fab\MediaUploader\FileUpload\UploadedFileInterface $uploadedFile
-     * @return \Fab\MediaUploader\FileUpload\UploadedFileInterface
+     * @param \Fab\MediaUpload\FileUpload\UploadedFileInterface $uploadedFile
+     * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      */
     public function optimize($uploadedFile)
     {
