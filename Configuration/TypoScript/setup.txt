@@ -62,6 +62,7 @@ page_1386871774 {
         admPanel = 0
         disableAllHeaderCode = 1
         additionalHeaders = Content-type:text/json
+        debug = 0
     }
     10 = USER_INT
     10 {
