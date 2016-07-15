@@ -11723,6 +11723,16 @@ else {
 (function($) {
 	$(function() {
 
+		/**
+		 * @returns {string}
+		 */
+		var getUri = function() {
+			var uri = window.location.pathname; // avoid bad surprise if root page is redirected
+			if (/index.php/.test(window.location.pathname)) {
+				uri += window.location.search;
+			}
+			return uri;
+		};
 
 		/**
 		 * Ony works if MediaUpload is defined.
@@ -11756,13 +11766,13 @@ else {
 						deleteFile: {
 							enabled: true,
 							method: "POST",
-							endpoint: "/index.php",
+							endpoint: getUri(),
 							params: {
 								type: 1386871774
 							}
 						},
 						request: {
-							endpoint: '/index.php'
+							endpoint: getUri()
 						}
 					})
 					.on('deleteComplete', function() {
@@ -11785,7 +11795,6 @@ else {
 						var parameterPrefix = 'tx_mediaupload_pi1';
 						params[parameterPrefix + '[storageIdentifier]'] = settings.storage;
 						params['type'] = '1386871773';
-						console.log(params);
 						console.log(params);
 						$(this).fineUploader('setParams', params);
 					})
