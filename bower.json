@@ -2,6 +2,6 @@
   "name": "media_upload",
   "ignore": [],
   "dependencies": {
-    "fine-uploader": "~5.0.8"
+    "fine-uploader": "~5.10.0"
   }
 }
