@@ -24,9 +24,9 @@ plugin.tx_mediaupload {
 	}
 }
 
-#########################################
+#############################
 # Upload action configuration
-#########################################
+#############################
 page_1386871773 = PAGE
 page_1386871773 {
     typeNum = 1386871773
@@ -39,7 +39,8 @@ page_1386871773 {
     }
     10 = USER_INT
     10 {
-        userFunc = tx_extbase_core_bootstrap->run
+        userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+        vendorName = Fab
         extensionName = MediaUpload
         pluginName = Pi1
 		switchableControllerActions {
@@ -50,9 +51,9 @@ page_1386871773 {
     }
 }
 
-#########################################
+################################
 # Delete action of uploaded file
-#########################################
+################################
 page_1386871774 = PAGE
 page_1386871774 {
     typeNum = 1386871774
@@ -64,7 +65,9 @@ page_1386871774 {
     }
     10 = USER_INT
     10 {
-        userFunc = tx_extbase_core_bootstrap->run
+        userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+
+        vendorName = Fab
         extensionName = MediaUpload
         pluginName = Pi1
         switchableControllerActions {

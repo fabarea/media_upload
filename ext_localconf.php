@@ -2,7 +2,7 @@
 if (!defined('TYPO3_MODE')) die ('Access denied.');
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'media_upload',
+    'Fab.media_upload',
     'Pi1',
     array(
         'MediaUpload' => 'upload',

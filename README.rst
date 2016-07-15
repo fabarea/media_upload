@@ -238,7 +238,7 @@ Install the required Web Components::
 
 Then you must build Fine Uploader from the source::
 
-	cd Resources/Public/WebComponents/fine-uploader
+	cd Resources/Private/BowerComponents/fine-uploader
 
 	# Install the necessary NodeJS package inside "fine-uploader".
 	npm install

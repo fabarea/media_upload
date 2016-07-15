@@ -2,9 +2,9 @@ module.exports = (grunt) ->
 	grunt.initConfig
 		pkg: grunt.file.readJSON("package.json")
 		directory:
-			components: "Resources/Public/WebComponents"
+			components: "Resources/Private/BowerComponents"
 			build: "Resources/Public/Build"
-			source: "Resources/Public/Source"
+			source: "Resources/Private/Assets"
 
 	############################ Assets ############################
 
@@ -147,25 +147,25 @@ module.exports = (grunt) ->
 				separator: "\n\n"
 			js:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/jquery.fineuploader-*/jquery.fineuploader-[0-9].[0-9].[0-9].js"
+					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/jquery.fine-uploader.js"
 					"<%= jshint.files %>"
 				]
 				dest: "<%= directory.build %>/media_upload.js"
 			js_min:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/jquery.fineuploader-*/jquery.fineuploader-[0-9].[0-9].[0-9].min.js"
+					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/jquery.fine-uploader.min.js"
 					"<%= uglify.js.files[0].dest %>"
 				]
 				dest: "<%= directory.build %>/media_upload.min.js"
 			css:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/jquery.fineuploader-*/fineuploader-[0-9].[0-9].[0-9].css"
+					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/fine-uploader.css"
 					"<%= sass.css.files[0].dest %>"
 				]
 				dest: "<%= directory.build %>/media_upload.css"
 			css_min:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/jquery.fineuploader-*/fineuploader-[0-9].[0-9].[0-9].min.css"
+					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/fine-uploader.min.css"
 					"<%= cssmin.css.files[0].dest %>"
 				]
 				dest: "<%= directory.build %>/media_upload.min.css"

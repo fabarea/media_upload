@@ -24,6 +24,7 @@ class UploadViewHelper extends AbstractWidgetViewHelper
 
     /**
      * @return void
+     * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception
      */
     public function initializeArguments()
     {

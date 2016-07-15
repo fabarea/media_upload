@@ -94,7 +94,6 @@ class MediaUploadController extends ActionController
      */
     public function uploadAction($storageIdentifier)
     {
-
         $storage = ResourceFactory::getInstance()->getStorageObject($storageIdentifier);
 
         /** @var $uploadManager UploadManager */
@@ -128,6 +127,7 @@ class MediaUploadController extends ActionController
      * Signal that is emitted before upload processing is called.
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      * @signal
      */
