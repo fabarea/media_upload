@@ -1,7 +1,7 @@
 {
 	"name": "fab/media-upload",
 	"type": "typo3-cms-extension",
-	"description": "Fluid widget for (mass) uploading files on the Frontend using HTML5 techniques powered by Fine Uploader - http://fineuploader.com/",
+	"description": "Fluid widget for mass uploading files on the Frontend using HTML5 techniques powered by Fine Uploader - http://fineuploader.com/",
 	"homepage": "https://github.com/fabarea/media_upload",
 	"license": [
 		"GPL-2.0+"
