@@ -24,7 +24,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class UploadManager
 {
 
-    const UPLOAD_FOLDER = 'typo3temp/pics';
+    const UPLOAD_FOLDER = 'typo3temp/MediaUpload';
 
     /**
      * @var int|NULL|string
