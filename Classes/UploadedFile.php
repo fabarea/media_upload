@@ -96,12 +96,4 @@ class UploadedFile
         return $this->temporaryFileNameAndPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getSanitizedFileName()
-    {
-        return preg_replace('/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}-/', '', $this->fileName);
-    }
-
 }
