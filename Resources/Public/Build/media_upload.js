@@ -11795,7 +11795,6 @@ else {
 						var parameterPrefix = 'tx_mediaupload_pi1';
 						params[parameterPrefix + '[storageIdentifier]'] = settings.storage;
 						params['type'] = '1386871773';
-						console.log(params);
 						$(this).fineUploader('setParams', params);
 					})
 					.on('complete', function(event, id, fileName, responseJSON) {
@@ -11815,7 +11814,7 @@ else {
 								.find('.view-btn')
 								.each(function(index, element) {
 									var uri = $(element).attr('href');
-									var basename = uri.replace(/.*\//, "");
+									var basename = uri.replace("/typo3temp/pics/", "");
 									uploadedFiles.push(basename);
 								});
 
