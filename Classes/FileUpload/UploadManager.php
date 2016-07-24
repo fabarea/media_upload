@@ -8,8 +8,12 @@ namespace Fab\MediaUpload\FileUpload;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Media\Utility\PermissionUtility;
+use Fab\MediaUpload\Utility\UploadUtility;
+use Fab\MediaUpload\Utility\UuidUtility;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -33,11 +37,6 @@ class UploadManager
     protected $uploadFolder;
 
     /**
-     * @var FormUtility
-     */
-    protected $formUtility;
-
-    /**
      * @var \TYPO3\CMS\Core\Resource\ResourceStorage
      */
     protected $storage;
@@ -52,17 +51,15 @@ class UploadManager
     /**
      * @param \TYPO3\CMS\Core\Resource\ResourceStorage $storage
      * @return UploadManager
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    public function __construct($storage = NULL)
+    public function __construct($storage = null)
     {
-
-        $this->initializeUploadFolder();
-
         // max file size in bytes
         $this->sizeLimit = GeneralUtility::getMaxUploadFileSize() * 1024;
         $this->checkServerSettings();
 
-        $this->formUtility = FormUtility::getInstance();
         $this->storage = $storage;
     }
 
@@ -70,34 +67,34 @@ class UploadManager
      * Handle the uploaded file.
      *
      * @return UploadedFileInterface
+     * @throws \BadFunctionCallException
+     * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
     public function handleUpload()
     {
 
         /** @var $uploadedFile UploadedFileInterface */
-        $uploadedFile = false;
-        if ($this->formUtility->isMultiparted()) {
+        if (UploadUtility::getInstance()->isMultiparted()) {
 
             // Default case
             $uploadedFile = GeneralUtility::makeInstance(MultipartedFile::class);
-        } elseif ($this->formUtility->isOctetStreamed()) {
+        } elseif (UploadUtility::getInstance()->isOctetStreamed()) {
 
             // Fine Upload plugin would use it if forceEncoded = false and paramsInBody = false
             $uploadedFile = GeneralUtility::makeInstance(StreamedFile::class);
-        } elseif ($this->formUtility->isUrlEncoded()) {
+        } elseif (UploadUtility::getInstance()->isUrlEncoded()) {
 
             // Used for image resizing in BE
             $uploadedFile = GeneralUtility::makeInstance(Base64File::class);
-        }
-
-        if (!$uploadedFile) {
+        } else {
             $this->throwException('Could not instantiate an upload object... No file was uploaded?');
         }
 
-        $fileName = $this->getFileName($uploadedFile);
-
         $this->checkFileSize($uploadedFile->getSize());
+        $this->initializeUploadFolder();
+
+        $fileName = $this->getFileName($uploadedFile);
         $this->checkFileAllowed($fileName);
 
         $saved = $uploadedFile->setInputName($this->inputName)
@@ -121,6 +118,7 @@ class UploadManager
      * object's maximum size for uploads.
      *
      * @return void
+     * @throws \RuntimeException
      */
     protected function checkServerSettings()
     {
@@ -161,7 +159,7 @@ class UploadManager
      * @param UploadedFileInterface $uploadedFile
      * @return string
      */
-    public function getFileName(UploadedFileInterface $uploadedFile)
+    protected function getFileName(UploadedFileInterface $uploadedFile)
     {
         $pathInfo = pathinfo($uploadedFile->getOriginalName());
         $fileName = $this->sanitizeFileName($pathInfo['filename']);
@@ -176,8 +174,9 @@ class UploadManager
      * Check whether the file size does not exceed the allowed limit
      *
      * @param int $size
+     * @throws \RuntimeException
      */
-    public function checkFileSize($size)
+    protected function checkFileSize($size)
     {
         if ((int)$size === 0) {
             $this->throwException('File is empty');
@@ -192,16 +191,35 @@ class UploadManager
      * Check whether the file is allowed
      *
      * @param string $fileName
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \BadFunctionCallException
      */
-    public function checkFileAllowed($fileName)
+    protected function checkFileAllowed($fileName)
     {
         $isAllowed = $this->checkFileExtensionPermission($fileName);
-        var_dump($isAllowed);
-        exit();
         if (!$isAllowed) {
-            $these = PermissionUtility::getInstance()->getAllowedExtensionList();
-            $this->throwException('File has an invalid extension, it should be one of ' . $these . '.');
+            $this->throwException('File has an invalid extension as defined by the system.');
         }
+
+        if (ExtensionManagementUtility::isLoaded('media')) {
+
+            $fileExtension = $this->getFileExtension($fileName);
+            $allowedFileExtensions = PermissionUtility::getInstance()->getAllowedExtensions($this->storage);
+            if (!in_array($fileExtension, $allowedFileExtensions, true)) {
+                $this->throwException('File has an invalid extension as defined in the storage settings');
+            }
+        }
+    }
+
+    /**
+     * @param string $fileName
+     * @return string
+     */
+    protected function getFileExtension($fileName)
+    {
+        $fileInfo = GeneralUtility::split_fileref($fileName);
+        return strtolower($fileInfo['fileext']);
     }
 
     /**
@@ -212,16 +230,16 @@ class UploadManager
      * @param string $fileName Full filename
      * @return boolean true if extension/filename is allowed
      */
-    public function checkFileExtensionPermission($fileName)
+    protected function checkFileExtensionPermission($fileName)
     {
         $isAllowed = GeneralUtility::verifyFilenameAgainstDenyPattern($fileName);
         if ($isAllowed) {
-            $fileInfo = GeneralUtility::split_fileref($fileName);
+
             // Set up the permissions for the file extension
             $fileExtensionPermissions = $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['webspace'];
             $fileExtensionPermissions['allow'] = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['allow']));
             $fileExtensionPermissions['deny'] = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['deny']));
-            $fileExtension = strtolower($fileInfo['fileext']);
+            $fileExtension = $this->getFileExtension($fileName);
             if ($fileExtension !== '') {
                 // If the extension is found amongst the allowed types, we return true immediately
                 if ($fileExtensionPermissions['allow'] === '*' || GeneralUtility::inList($fileExtensionPermissions['allow'], $fileExtension)) {
@@ -256,7 +274,7 @@ class UploadManager
      * @param string $extra
      * @return string
      */
-    public function sanitizeFileName($fileName, $slug = '-', $extra = NULL)
+    protected function sanitizeFileName($fileName, $slug = '-', $extra = NULL)
     {
         return trim(preg_replace('~[^0-9a-z_' . preg_quote($extra, '~') . ']+~i', $slug, $this->unAccent($fileName)), $slug);
     }
@@ -281,8 +299,8 @@ class UploadManager
     }
 
     /**
-     * @throws FailedFileUploadException
      * @param string $message
+     * @throws \RuntimeException
      */
     protected function throwException($message)
     {
@@ -293,6 +311,8 @@ class UploadManager
      * Initialize Upload Folder.
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function initializeUploadFolder()
     {
@@ -303,9 +323,15 @@ class UploadManager
             GeneralUtility::mkdir($this->uploadFolder);
         }
 
+        $possibleSubFolder = GeneralUtility::_GP('qquuid');
+        if (UuidUtility::getInstance()->isValid($possibleSubFolder)) {
+            $this->uploadFolder = $this->uploadFolder . DIRECTORY_SEPARATOR . $possibleSubFolder;
+            GeneralUtility::mkdir($this->uploadFolder);
+        }
+
         // Check whether the upload folder is writable
         if (!is_writable($this->uploadFolder)) {
-            $this->throwException("Server error. Upload directory isn't writable.");
+            $this->throwException('Server error. Upload directory is not writable.');
         }
     }
 

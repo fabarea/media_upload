@@ -8,6 +8,7 @@ namespace Fab\MediaUpload\FileUpload;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use RuntimeException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -43,6 +44,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
 
     /**
      * @return \Fab\MediaUpload\FileUpload\Base64File
+     * @throws RuntimeException
      */
     public function __construct()
     {
@@ -52,7 +54,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         if (preg_match('/^data:image\/(jpg|jpeg|png)/i', $encodedImage, $matches)) {
             $this->extension = $matches[1];
         } else {
-            return FALSE;
+            throw new RuntimeException('File extension is not recognized', 1469376026);
         }
 
         // Remove the mime-type header
@@ -62,27 +64,27 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         $this->image = base64_decode($data, true);
 
         if (!$this->image) {
-            return FALSE;
+            throw new RuntimeException('No data could be decoded', 1469376027);
         }
 
-        $this->setName(uniqid() . '.' . $this->extension);
+        $this->setName(uniqid('', true) . '.' . $this->extension);
     }
 
     /**
      * Save the file to the specified path
      *
-     * @throws \Fab\MediaUpload\Exception\EmptyPropertyException
      * @return boolean TRUE on success
+     * @throws RuntimeException
      */
     public function save()
     {
 
         if (is_null($this->uploadFolder)) {
-            throw new \Fab\MediaUpload\Exception\EmptyPropertyException('Upload folder is not defined', 1362587741);
+            throw new RuntimeException('Upload folder is not defined', 1362587741);
         }
 
         if (is_null($this->name)) {
-            throw new \Fab\MediaUpload\Exception\EmptyPropertyException('File name is not defined', 1362587742);
+            throw new RuntimeException('File name is not defined', 1362587742);
         }
 
         return file_put_contents($this->getFileWithAbsolutePath(), $this->image) > 0;
@@ -109,7 +111,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         if (isset($GLOBALS['_SERVER']['CONTENT_LENGTH'])) {
             return (int)$GLOBALS['_SERVER']['CONTENT_LENGTH'];
         } else {
-            throw new \Exception('Getting content length is not supported.');
+            throw new RuntimeException('Getting content length is not supported.');
         }
     }
 
@@ -117,6 +119,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      * Get MIME type of file.
      *
      * @return string|boolean MIME type. eg, text/html, FALSE on error
+     * @throws \RuntimeException
      */
     public function getMimeType()
     {

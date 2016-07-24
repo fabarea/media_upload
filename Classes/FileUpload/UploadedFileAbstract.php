@@ -9,8 +9,6 @@ namespace Fab\MediaUpload\FileUpload;
  */
 
 use TYPO3\CMS\Core\Resource\File;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\MediaUpload\Exception\MissingFileException;
 
 /**
  * An abstract class for uploaded file.
@@ -37,6 +35,7 @@ abstract class UploadedFileAbstract implements UploadedFileInterface
      * Get the file type.
      *
      * @return int
+     * @throws \RuntimeException
      */
     public function getType()
     {
@@ -147,12 +146,13 @@ abstract class UploadedFileAbstract implements UploadedFileInterface
 
     /**
      * Check whether the file exists.
+     * @throws \RuntimeException
      */
     protected function checkFileExistence()
     {
         if (!is_file($this->getFileWithAbsolutePath())) {
             $message = sprintf('File not found at "%s". Did you save it?', $this->getFileWithAbsolutePath());
-            throw new MissingFileException($message, 1361786958);
+            throw new \RuntimeException($message, 1361786958);
         }
     }
 

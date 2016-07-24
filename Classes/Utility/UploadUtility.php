@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUpload\FileUpload;
+namespace Fab\MediaUpload\Utility;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -12,19 +12,20 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class that optimize an image according to some settings.
+ * Class UploadUtility
  */
-class FormUtility implements SingletonInterface
+class UploadUtility implements SingletonInterface
 {
 
     /**
      * Returns a class instance.
      *
-     * @return FormUtility
+     * @return UploadUtility
+     * @throws \InvalidArgumentException
      */
     static public function getInstance()
     {
-        return GeneralUtility::makeInstance(FormUtility::class);
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**

@@ -57,8 +57,8 @@ class UploadFileService
             }
             $fileSize = round(filesize($temporaryFileNameAndPath) / 1000);
 
-            /** @var \Fab\MediaUpload\UploadedFile $uploadedFile */
-            $uploadedFile = GeneralUtility::makeInstance('Fab\MediaUpload\UploadedFile');
+            /** @var UploadedFile $uploadedFile */
+            $uploadedFile = GeneralUtility::makeInstance(UploadedFile::class);
             $uploadedFile->setTemporaryFileNameAndPath($temporaryFileNameAndPath)
                 ->setFileName($uploadedFileName)
                 ->setSize($fileSize);
