@@ -56,10 +56,10 @@ class UploadManager
      */
     public function __construct($storage = null)
     {
-        // max file size in bytes
-        $this->sizeLimit = GeneralUtility::getMaxUploadFileSize() * 1024;
         $this->checkServerSettings();
 
+        // max file size in bytes
+        $this->sizeLimit = GeneralUtility::getMaxUploadFileSize() * 1024;
         $this->storage = $storage;
     }
 
@@ -91,14 +91,15 @@ class UploadManager
             $this->throwException('Could not instantiate an upload object... No file was uploaded?');
         }
 
-        $this->checkFileSize($uploadedFile->getSize());
         $this->initializeUploadFolder();
+
+        $this->checkFileSize($uploadedFile->getSize());
 
         $fileName = $this->getFileName($uploadedFile);
         $this->checkFileAllowed($fileName);
 
-        $saved = $uploadedFile->setInputName($this->inputName)
-            ->setUploadFolder($this->uploadFolder)
+        $saved = $uploadedFile->setInputName($this->getInputName())
+            ->setUploadFolder($this->getUploadFolder())
             ->setName($fileName)
             ->save();
 
@@ -311,26 +312,19 @@ class UploadManager
      * Initialize Upload Folder.
      *
      * @return void
-     * @throws \InvalidArgumentException
      * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      */
     protected function initializeUploadFolder()
     {
-        $this->uploadFolder = PATH_site . self::UPLOAD_FOLDER;
-
+        $uploadFolder = $this->getUploadFolder();
         // Initialize the upload folder for file transfer and create it if not yet existing
-        if (!file_exists($this->uploadFolder)) {
-            GeneralUtility::mkdir($this->uploadFolder);
-        }
-
-        $possibleSubFolder = GeneralUtility::_GP('qquuid');
-        if (UuidUtility::getInstance()->isValid($possibleSubFolder)) {
-            $this->uploadFolder = $this->uploadFolder . DIRECTORY_SEPARATOR . $possibleSubFolder;
-            GeneralUtility::mkdir($this->uploadFolder);
+        if (!file_exists($uploadFolder)) {
+            GeneralUtility::mkdir_deep($uploadFolder);
         }
 
         // Check whether the upload folder is writable
-        if (!is_writable($this->uploadFolder)) {
+        if (!is_writable($uploadFolder)) {
             $this->throwException('Server error. Upload directory is not writable.');
         }
     }
@@ -355,9 +349,19 @@ class UploadManager
 
     /**
      * @return string
+     * @throws \InvalidArgumentException
      */
     public function getUploadFolder()
     {
+        if ($this->uploadFolder === null) {
+            $this->uploadFolder = PATH_site . self::UPLOAD_FOLDER;
+
+            $possibleSubFolder = GeneralUtility::_GP('qquuid');
+            if (UuidUtility::getInstance()->isValid($possibleSubFolder)) {
+                $this->uploadFolder = $this->uploadFolder . DIRECTORY_SEPARATOR . $possibleSubFolder;
+            }
+
+        }
         return $this->uploadFolder;
     }
 
