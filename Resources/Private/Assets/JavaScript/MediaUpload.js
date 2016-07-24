@@ -95,7 +95,7 @@
 								.find('.view-btn')
 								.each(function(index, element) {
 									var uri = $(element).attr('href');
-									var basename = uri.replace(/.*\//, "");
+									var basename = uri.replace("/typo3temp/pics/", "");
 									uploadedFiles.push(basename);
 								});
 
