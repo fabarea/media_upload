@@ -16,12 +16,11 @@ a fall back method with classical file upload is used by posting the file. (Thou
 .. _TYPO3 CMS: http://typo3.org/
 
 
-TODO
-====
+.. image:: https://raw.github.com/fabarea/media_upload/master/Documentation/Upload-01.png
 
-* Remove dependency to Media
-* Add screenshot
+After a file has been uploaded, the user can validate and possibly remove it from the list.
 
+.. image:: https://raw.github.com/fabarea/media_upload/master/Documentation/Upload-02.png
 
 Installation
 ============
