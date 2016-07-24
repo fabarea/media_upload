@@ -11,6 +11,9 @@ namespace Fab\MediaUpload\FileUpload;
 use Fab\Media\Utility\PermissionUtility;
 use Fab\MediaUpload\Utility\UploadUtility;
 use Fab\MediaUpload\Utility\UuidUtility;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -111,7 +114,38 @@ class UploadManager
         if ($uploadedFile->getType() === File::FILETYPE_IMAGE) {
             $uploadedFile = ImageOptimizer::getInstance($this->storage)->optimize($uploadedFile);
         }
+
+        // Clean up empty sub-folder
+        $this->cleanUpEmptySubFolder();
+
         return $uploadedFile;
+    }
+
+    /**
+     * Remove possible empty sub directory as a sanity measure.
+     */
+    protected function cleanUpEmptySubFolder()
+    {
+        // Get recursive iterator against the upload folder.
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                self::UPLOAD_FOLDER,
+                FilesystemIterator::SKIP_DOTS
+            ),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        // If the folder is found empty -> remove it as file was already processed.
+        /** @var \SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if ($file->isDir()) {
+                $isDirEmpty = !(new \FilesystemIterator($file))->valid();
+
+                if ($isDirEmpty) {
+                    rmdir((string)$file);
+                }
+            }
+        }
     }
 
     /**
