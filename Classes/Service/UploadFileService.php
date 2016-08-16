@@ -46,22 +46,22 @@ class UploadFileService
         // Convert uploaded files into array
         foreach ($uploadedFiles as $uploadedFileName) {
 
-            // Protection against directory traversal
-            $uploadedFileName = str_replace('..' . DIRECTORY_SEPARATOR, '', $uploadedFileName);
-            $temporaryFileNameAndPath = UploadManager::UPLOAD_FOLDER . DIRECTORY_SEPARATOR . $uploadedFileName;
+            // Protection against directory traversal.
+            $sanitizedFileNameAndPath = $this->sanitizeFileNameAndPath($uploadedFileName);
 
-            if (!file_exists($temporaryFileNameAndPath)) {
+            if (!is_file($sanitizedFileNameAndPath)) {
                 $message = sprintf(
                     'I could not find file "%s". Something went wrong during the upload? Or is it some cache effect?',
-                    $temporaryFileNameAndPath
+                    $uploadedFileName
                 );
                 throw new \RuntimeException($message, 1389550006);
             }
-            $fileSize = round(filesize($temporaryFileNameAndPath) / 1000);
+
+            $fileSize = round(filesize($sanitizedFileNameAndPath) / 1000);
 
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = GeneralUtility::makeInstance(UploadedFile::class);
-            $uploadedFile->setTemporaryFileNameAndPath($temporaryFileNameAndPath)
+            $uploadedFile->setTemporaryFileNameAndPath($sanitizedFileNameAndPath)
                 ->setFileName(basename($uploadedFileName))
                 ->setSize($fileSize);
 
@@ -69,6 +69,28 @@ class UploadFileService
         }
 
         return $files;
+    }
+
+    /**
+     * Protection against directory traversal.
+     *
+     * @param string $uploadedFileName
+     * @return string
+     */
+    protected function sanitizeFileNameAndPath($uploadedFileName)
+    {
+        // default return.
+        $sanitizedFileNameAndPath = '';
+
+        // Prepend slash in any case.
+        $uploadedFileName = '/' . ltrim($uploadedFileName, '/');
+        $pathSegments = GeneralUtility::trimExplode(UploadManager::UPLOAD_FOLDER, $uploadedFileName, true);
+
+        // Also check the path does not contain any back segment like "..".
+        if (count($pathSegments) === 2 && strpos($uploadedFileName, '..') === false) {
+            $sanitizedFileNameAndPath = UploadManager::UPLOAD_FOLDER . $pathSegments[1];
+        }
+        return $sanitizedFileNameAndPath;
     }
 
     /**
