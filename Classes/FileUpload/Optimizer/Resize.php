@@ -8,7 +8,8 @@ namespace Fab\MediaUpload\FileUpload\Optimizer;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\MediaUpload\Module\MediaModule;
+use Fab\Media\Module\MediaModule;
+use Fab\MediaUpload\Dimension;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\MediaUpload\FileUpload\ImageOptimizerInterface;
 
@@ -45,28 +46,24 @@ class Resize implements ImageOptimizerInterface
      *
      * @param \Fab\MediaUpload\FileUpload\UploadedFileInterface $uploadedFile
      * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function optimize($uploadedFile)
     {
-
         $imageInfo = getimagesize($uploadedFile->getFileWithAbsolutePath());
 
-        $currentWidth = $imageInfo[0];
-        $currentHeight = $imageInfo[1];
+        list($currentWidth, $currentHeight) = $imageInfo;
 
         // resize an image if this one is bigger than telling by the settings.
         if (is_object($this->storage)) {
             $storageRecord = $this->storage->getStorageRecord();
-        } else {
-            // Will only work in the BE for now.
-            $storage = $this->getMediaModule()->getCurrentStorage();
-            $storageRecord = $storage->getStorageRecord();
         }
 
         if (strlen($storageRecord['maximum_dimension_original_image']) > 0) {
 
-            /** @var \Fab\MediaUpload\Dimension $imageDimension */
-            $imageDimension = GeneralUtility::makeInstance('Fab\MediaUpload\Dimension', $storageRecord['maximum_dimension_original_image']);
+            /** @var Dimension $imageDimension */
+            $imageDimension = GeneralUtility::makeInstance(Dimension::class, $storageRecord['maximum_dimension_original_image']);
             if ($currentWidth > $imageDimension->getWidth() || $currentHeight > $imageDimension->getHeight()) {
 
                 // resize taking the width as reference
@@ -113,6 +110,7 @@ class Resize implements ImageOptimizerInterface
      */
     protected function wrapFileName($inputName)
     {
+        $currentLocale = '';
         if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem']) {
             $currentLocale = setlocale(LC_CTYPE, 0);
             setlocale(LC_CTYPE, $GLOBALS['TYPO3_CONF_VARS']['SYS']['systemLocale']);
@@ -124,12 +122,5 @@ class Resize implements ImageOptimizerInterface
         return $escapedInputName;
     }
 
-    /**
-     * @return MediaModule
-     */
-    protected function getMediaModule()
-    {
-        return GeneralUtility::makeInstance('Fab\MediaUpload\Module\MediaModule');
-    }
 
 }
