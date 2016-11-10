@@ -122,7 +122,7 @@ to retrieve them and store them into their final location. This code can be used
 			$storage = ResourceFactory::getInstance()->getStorageObject(1);
 
 			/** @var File $file */
-			$file = $storage->addUploadedFile(
+			$file = $storage->addFile(
 				$uploadedFile->getTemporaryFileNameAndPath(),
 				$storage->getRootLevelFolder(),
 				$uploadedFile->getFileName(),
