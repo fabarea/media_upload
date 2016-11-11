@@ -8,6 +8,7 @@ namespace Fab\MediaUpload\ViewHelpers\Widget\Controller;
  * LICENSE.md file that was distributed with this source code.
  */
 
+use Fab\Media\Utility\PermissionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
 
