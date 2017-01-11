@@ -77,8 +77,8 @@ class Rotate implements ImageOptimizerInterface
         $extension = strtolower(substr($filename, strrpos($filename, '.') + 1));
         $orientation = 1; // Fallback to "straight"
         if (\TYPO3\CMS\Core\Utility\GeneralUtility::inList('jpg,jpeg,tif,tiff', $extension) && function_exists('exif_read_data')) {
-            $exif = exif_read_data($filename);
-            if ($exif) {
+            $exif = @exif_read_data($filename);
+            if ($exif !== false && is_array($exif) && array_key_exists('Orientation', $exif)) {
                 $orientation = $exif['Orientation'];
             }
         }
