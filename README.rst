@@ -43,12 +43,14 @@ Upload Widget
 You can make use of a Media Upload widget. Syntax is as follows::
 
 
+	# Minimum syntax
 	<mu:widget.upload storage="1"/>
 
 	{namespace mu=Fab\MediaUpload\ViewHelpers}
 
-	# With some attribute
-	<mu:widget.upload allowedExtensions="jpg, png" storage="1" property="foo"/>
+	# With some more attributes... We assume we have a property "images" in our model
+	# and this value could be something different like "documents" or whatever.
+	<mu:widget.upload allowedExtensions="jpg, png" storage="1" property="images"/>
 
 
 	# Required attributes:
@@ -75,18 +77,18 @@ You can make use of a Media Upload widget. Syntax is as follows::
 	# maximumItems = 10
 	#
 	# The property to be used for retrieving the uploaded images, default NULL.
-	# properties = foo
+	# property = foo
 
 
 To see the uploaded images in a second step::
 
 	<mu:widget.showUploaded />
 
-	<mu:widget.showUploaded property="foo" />
+	<mu:widget.showUploaded property="images" />
 
 
 	# The property to be used for retrieving the uploaded images, default NULL.
-	# properties = foo
+	# property = foo
 
 
 Upload Service
@@ -110,8 +112,8 @@ to retrieve them and store them into their final location. This code can be used
 		$uploadedFiles = $this->uploadFileService->getUploadedFiles()
 
 		# A property name is needed in case specified in the Fluid Widget
-		# <mu:widget.upload property="foo"/>
-		$uploadedFiles = $this->uploadFileService->getUploadedFiles('foo')
+		# <mu:widget.upload property="images"/>
+		$uploadedFiles = $this->uploadFileService->getUploadedFiles('images')
 
 		# Process uploaded files and move them into a Resource Storage (FAL)
 		foreach($uploadedFiles as $uploadedFile) {
@@ -133,9 +135,11 @@ to retrieve them and store them into their final location. This code can be used
 			# via a regular "input" control instead of the upload widget (fine uploader plugin)
 			# $file = $storage->addUploadedFile()
 
-			// Create File Reference
-			...
+			$fileReference = $this->objectManager->get(\YourVendor\YourExtensionKey\Domain\Model\FileReference::class);
+			$fileReference->setFile($file);
+			$yourDomainObject->addImages($fileReference);
 		}
+		...
 	}
 
 
@@ -143,7 +147,7 @@ to retrieve them and store them into their final location. This code can be used
 File Configuration in FAL
 =========================
 
-How to configure a field / property of type File?
+How to configure a field / property of type file?
 
 SQL
 ---
@@ -160,7 +164,7 @@ TCA
 
 ::
 
-	$TCA['tx_domain_model_foo'] = array(
+    $TCA['tx_domain_model_foo'] = array(
         'images' => array(
                 'label' => 'Images',
                 'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
@@ -175,19 +179,75 @@ TCA
                 $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
             ),
         ),
-);
+    );
 
 
-Extbase
--------
+Model
+-----
+
+Your domain model, should then contain the method ``addImages`` for the purpose of ``$yourDomainObject->addImages($fileReference);``. See code above in the Upload Service.
 
 ::
 
-	/**
-      * Files
-      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
-      */
-    protected $files;
+    /**
+     * Images
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+     */
+    protected $images;
+
+    public function addImages(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image) {
+        $this->images->attach($image);
+    }
+
+
+File Reference Model
+--------------------
+
+We must extend the FileReference for the purpose of ``$fileReference->setFile($file);```. See code above in the Upload Service.
+
+::
+
+	namespace YourVendor\YourExtensionKey\Domain\Model;
+
+	class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
+
+	    /**
+	     * @params \TYPO3\CMS\Core\Resource\File $file
+	     */
+		public function setFile(\TYPO3\CMS\Core\Resource\File $file) {
+			$this->originalFileIdentifier = (int)$file->getUid();
+		}
+	}
+
+
+TypoScript
+----------
+
+Finally we must configure the persistence layer of Extbase.
+
+
+::
+
+	config.tx_extbase {
+		persistence {
+			# Enable this if you need the reference index to be updated
+			updateReferenceIndex = 1
+			classes {
+				YourVendor\YourExtensionKey\Domain\Model\FileReference {
+					mapping {
+						tableName = sys_file_reference
+						columns {
+							uid_local.mapOnProperty = originalFileIdentifier
+						}
+					}
+				}
+			}
+		}
+		objects {
+			TYPO3\CMS\Extbase\Domain\Model\FileReference.className = YourVendor\YourExtensionKey\Domain\Model\FileReference
+		}
+	}
+
 
 Security
 ========
@@ -231,7 +291,7 @@ consider that `Bower`_ and `Grunt`_ must be installed on your system as prerequi
 
 Install the required Web Components::
 
-	cd typo3conf/ext/media
+	cd typo3conf/ext/media_upload
 
 	# This will populate the directory Resources/Public/WebComponents.
 	bower install
@@ -251,7 +311,7 @@ Then you must build Fine Uploader from the source::
 
 Finally, you can run the Grunt of the extension to generate a build::
 
-	cd typo3conf/ext/media
+	cd typo3conf/ext/media_upload
 	grunt build
 
 While developing, you can use the ``watch`` which will generate the build as you edit files::
