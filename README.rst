@@ -48,7 +48,7 @@ You can make use of a Media Upload widget. Syntax is as follows::
 	{namespace mu=Fab\MediaUpload\ViewHelpers}
 
 	# With some attribute
-	<mu:widget.upload allowedExtensions="jpg, png" storage="1" property="foo"/>
+	<mu:widget.upload allowedExtensions="jpg, png" storage="1" property="images"/>
 
 
 	# Required attributes:
@@ -75,18 +75,18 @@ You can make use of a Media Upload widget. Syntax is as follows::
 	# maximumItems = 10
 	#
 	# The property to be used for retrieving the uploaded images, default NULL.
-	# properties = foo
+	# property = foo
 
 
 To see the uploaded images in a second step::
 
 	<mu:widget.showUploaded />
 
-	<mu:widget.showUploaded property="foo" />
+	<mu:widget.showUploaded property="images" />
 
 
 	# The property to be used for retrieving the uploaded images, default NULL.
-	# properties = foo
+	# property = foo
 
 
 Upload Service
@@ -110,8 +110,8 @@ to retrieve them and store them into their final location. This code can be used
 		$uploadedFiles = $this->uploadFileService->getUploadedFiles()
 
 		# A property name is needed in case specified in the Fluid Widget
-		# <mu:widget.upload property="foo"/>
-		$uploadedFiles = $this->uploadFileService->getUploadedFiles('foo')
+		# <mu:widget.upload property="images"/>
+		$uploadedFiles = $this->uploadFileService->getUploadedFiles('images')
 
 		# Process uploaded files and move them into a Resource Storage (FAL)
 		foreach($uploadedFiles as $uploadedFile) {
@@ -133,9 +133,11 @@ to retrieve them and store them into their final location. This code can be used
 			# via a regular "input" control instead of the upload widget (fine uploader plugin)
 			# $file = $storage->addUploadedFile()
 
-			// Create File Reference
-			...
+			$fileReference = $this->objectManager->get(\YourVendor\YourExtensionKey\Domain\Model\FileReference::class);
+			$fileReference->setFile($file);
+			$yourDomainObject->addImages($fileReference);
 		}
+		...
 	}
 
 
@@ -160,7 +162,7 @@ TCA
 
 ::
 
-	$TCA['tx_domain_model_foo'] = array(
+    $TCA['tx_domain_model_foo'] = array(
         'images' => array(
                 'label' => 'Images',
                 'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
@@ -175,19 +177,63 @@ TCA
                 $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
             ),
         ),
-);
+    );
 
 
-Extbase
+Model
 -------
 
 ::
 
-	/**
-      * Files
-      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
-      */
-    protected $files;
+    /**
+     * Images
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+     */
+    protected $images;
+    
+    public function addImages(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image) {
+        $this->images->attach($image);
+    }
+
+
+File Reference Model
+--------------------
+
+::
+
+	namespace YourVendor\YourExtensionKey\Domain\Model;
+	class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
+		public function setFile(\TYPO3\CMS\Core\Resource\File $falFile) {
+			$this->originalFileIdentifier = (int)$falFile->getUid();
+		}
+	}
+
+
+TypoScript
+----------
+
+::
+
+	config.tx_extbase {
+		persistence {
+			# Enable this if you need the reference index to be updated
+			updateReferenceIndex = 1
+			classes {
+				YourVendor\YourExtensionKey\Domain\Model\FileReference {
+					mapping {
+						tableName = sys_file_reference
+						columns {
+							uid_local.mapOnProperty = originalFileIdentifier
+						}
+					}
+				}
+			}
+		}
+		objects {
+			TYPO3\CMS\Extbase\Domain\Model\FileReference.className = YourVendor\YourExtensionKey\Domain\Model\FileReference
+		}
+	}
+
 
 Security
 ========
