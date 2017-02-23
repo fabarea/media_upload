@@ -27,7 +27,7 @@
 					.fineUploader({
 						multiple: (settings.maximumItems > 1),
 						debug: false,
-						template: "media-upload-template-"+settings.uniqueId,
+						template: "media-upload-template-" + settings.uniqueId,
 						classes: {
 							success: 'alert alert-success',
 							fail: 'alert alert-error'
@@ -94,7 +94,7 @@
 								.find('.view-btn')
 								.each(function(index, element) {
 									var uri = $(element).attr('href');
-									var basename = uri.replace("/typo3temp/pics/", "");
+									var basename = uri.replace("/typo3temp/MediaUpload/", "");
 									uploadedFiles.push(basename);
 								});
 							$('#uploaded-files-' + property).val(uploadedFiles.join(','));

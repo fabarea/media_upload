@@ -30,18 +30,6 @@ module.exports = (grunt) ->
 					filter: "isFile"
 				]
 
-	##
-	# Assets: optimize assets for the web
-	##
-#		pngmin:
-#			images:
-#				options:
-#					ext: '.png'
-#				files: [
-#					src: "<%= directory.components %>/datatables/media/images/*.png"
-#					dest: "<%= directory.build %>"
-#				]
-
 	############################ StyleSheets ############################
 
 	##
@@ -69,36 +57,6 @@ module.exports = (grunt) ->
 					src: "<%= directory.source %>/StyleSheets/Sass/main.scss"
 					dest: ".tmp/sass/main.css"
 				]
-
-	##
-	# StyleSheet: importation of "external" stylesheets form third party extensions.
-	##
-#		replace:
-#			css:
-#				files: [
-#					expand: true
-#					flatten: true
-#					src: "<%= directory.components %>/datatables/media/css/jquery.dataTables.css"
-#					dest: ".tmp/replace"
-#				]
-#				options:
-#					replacements: [
-#						pattern: /\.\.\/images/ig,
-#						replacement: '../Images'
-#					]
-#			css_bootstrap:
-#				files: [
-#					expand: true
-#					flatten: true
-#					src: "<%= directory.components %>/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css"
-#					dest: ".tmp/replace"
-#				]
-#				options:
-#					replacements: [
-#						pattern: /\.\.\/images/ig,
-#						replacement: '../Images/Bootstrap'
-#					]
-
 
 	############################ JavaScript ############################
 
@@ -147,25 +105,25 @@ module.exports = (grunt) ->
 				separator: "\n\n"
 			js:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/jquery.fine-uploader.js"
+					"<%= directory.components %>/fine-uploader/dist/jquery.fine-uploader.js"
 					"<%= jshint.files %>"
 				]
 				dest: "<%= directory.build %>/media_upload.js"
 			js_min:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/jquery.fine-uploader.min.js"
+					"<%= directory.components %>/fine-uploader/dist/jquery.fine-uploader.min.js"
 					"<%= uglify.js.files[0].dest %>"
 				]
 				dest: "<%= directory.build %>/media_upload.min.js"
 			css:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/fine-uploader.css"
+					"<%= directory.components %>/fine-uploader/dist/fine-uploader.css"
 					"<%= sass.css.files[0].dest %>"
 				]
 				dest: "<%= directory.build %>/media_upload.css"
 			css_min:
 				src: [
-					"<%= directory.components %>/fine-uploader/_dist/[0-9]\.[0-9][0-9]\.[0-9]/jquery.fine-uploader/fine-uploader.min.css"
+					"<%= directory.components %>/fine-uploader/dist/fine-uploader.min.css"
 					"<%= cssmin.css.files[0].dest %>"
 				]
 				dest: "<%= directory.build %>/media_upload.min.css"
