@@ -11714,7 +11714,7 @@ else {
 }
 }(window));
 
-/*! 2016-07-15 */
+/*! 2016-08-18 */
 
 
 /**
@@ -11742,12 +11742,11 @@ else {
 			for (var i = 0; i < MediaUpload.instances.length; i++) {
 				var instance = MediaUpload.instances[i];
 				var settings = instance.settings;
-
 				$('#jquery-wrapped-fine-uploader-' + instance.id)
 					.fineUploader({
-						multiple: true,
-						debug: true,
-						template: "media-upload-template",
+						multiple: (settings.maximumItems > 1),
+						debug: false,
+						template: "media-upload-template-" + settings.uniqueId,
 						classes: {
 							success: 'alert alert-success',
 							fail: 'alert alert-error'
@@ -11775,10 +11774,10 @@ else {
 							endpoint: getUri()
 						}
 					})
-					.on('deleteComplete', function() {
+					.on('deleteComplete', {_settings: settings}, function(event) {
 						// Look up for successful uploaded files and feed a hidden field.
 						var uploadedFiles = [];
-						$('#qq-upload-list-' + settings.uniqueId)
+						$('#qq-upload-list-' + event.data._settings.uniqueId)
 							.find('li.alert-success')
 							.find('.view-btn')
 							.each(function(index, element) {
@@ -11787,19 +11786,19 @@ else {
 								uploadedFiles.push(basename);
 							});
 
-						$('#uploaded-files-' + settings.property).val(uploadedFiles.join(','));
+						$('#uploaded-files-' + event.data._settings.property).val(uploadedFiles.join(','));
 
 					})
-					.on('submit', function() {
+					.on('submit', {_settings: settings}, function(event) {
 						var params = {};
 						var parameterPrefix = 'tx_mediaupload_pi1';
-						params[parameterPrefix + '[storageIdentifier]'] = settings.storage;
+						params[parameterPrefix + '[storageIdentifier]'] = event.data._settings.storage;
 						params['type'] = '1386871773';
 						$(this).fineUploader('setParams', params);
 					})
-					.on('complete', function(event, id, fileName, responseJSON) {
-						var uniqueId = settings.uniqueId;
-						var property = settings.property;
+					.on('complete', {_settings: settings}, function(event, id, fileName, responseJSON) {
+						var uniqueId = event.data._settings.uniqueId;
+						var property = event.data._settings.property;
 						var $fileEl = $(this).fineUploader("getItemByFileId", id),
 							$viewBtn = $fileEl.find(".view-btn");
 
@@ -11814,10 +11813,9 @@ else {
 								.find('.view-btn')
 								.each(function(index, element) {
 									var uri = $(element).attr('href');
-									var basename = uri.replace("/typo3temp/pics/", "");
+									var basename = uri.replace("/typo3temp/MediaUpload/", "");
 									uploadedFiles.push(basename);
 								});
-
 							$('#uploaded-files-' + property).val(uploadedFiles.join(','));
 						}
 					});
