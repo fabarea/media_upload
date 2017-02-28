@@ -9,6 +9,7 @@ namespace Fab\MediaUpload\ViewHelpers\Widget\Controller;
  */
 
 use Fab\Media\Utility\PermissionUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
 
@@ -94,7 +95,7 @@ class UploadController extends AbstractWidgetController
 
         if (!empty($this->widgetConfiguration['allowedExtensions'])) {
             $allowedExtensions = GeneralUtility::trimExplode(',', $this->widgetConfiguration['allowedExtensions'], TRUE);
-        } elseif ($this->widgetConfiguration['storage'] > 0) {
+        } elseif ($this->widgetConfiguration['storage'] > 0 && ExtensionManagementUtility::isLoaded('media')) {
             $allowedExtensions = PermissionUtility::getInstance()->getAllowedExtensions($this->widgetConfiguration['storage']);
         }
 
