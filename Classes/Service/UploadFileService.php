@@ -43,6 +43,10 @@ class UploadFileService
         $files = array();
         $uploadedFiles = GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE);
 
+        $uploadedFiles = array_map(function ($item) {
+            return UploadManager::UPLOAD_FOLDER.'/'.$item;
+        }, $uploadedFiles);
+
         // Convert uploaded files into array
         foreach ($uploadedFiles as $uploadedFileName) {
 
