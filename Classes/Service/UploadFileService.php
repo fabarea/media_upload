@@ -41,7 +41,11 @@ class UploadFileService
     public function getUploadedFiles($property = '')
     {
         $files = array();
-        $uploadedFiles = GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE);
+        $uploadedRelativeFiles = GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE);
+
+        $uploadedFiles = array_map(function ($item) {
+            return UploadManager::UPLOAD_FOLDER.'/'.$item;
+        }, $uploadedRelativeFiles);
 
         // Convert uploaded files into array
         foreach ($uploadedFiles as $uploadedFileName) {
