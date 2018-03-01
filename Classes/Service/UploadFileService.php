@@ -93,6 +93,8 @@ class UploadFileService
         // Also check the path does not contain any back segment like "..".
         if (count($pathSegments) === 2 && strpos($uploadedFileName, '..') === false) {
             $sanitizedFileNameAndPath = UploadManager::UPLOAD_FOLDER . $pathSegments[1];
+        } elseif (count($pathSegments) === 1 && strpos($uploadedFileName, '..') === false) {
+            $sanitizedFileNameAndPath = UploadManager::UPLOAD_FOLDER . $pathSegments[0];
         }
         return $sanitizedFileNameAndPath;
     }
