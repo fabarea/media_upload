@@ -142,7 +142,8 @@ to retrieve them and store them into their final location. This code can be used
 		...
 	}
 
-**Note:** for TYPO3 8.7.x you need to change the conflict mode __changeName__ to __DuplicationBehavior::RENAME__ due to [Deprecation: #55419](https://docs.typo3.org/typo3cms/extensions/core/8.7/Changelog/7.5/Deprecation-55419-StreamlineFileConflictModeHandling.html)
+**Note:** for TYPO3 8.7.x you need to change the conflict mode **changeName** to **DuplicationBehavior::RENAME** due to https://docs.typo3.org/typo3cms/extensions/core/8.7/Changelog/7.5/Deprecation-55419-StreamlineFileConflictModeHandling.html
+
 File Configuration in FAL
 =========================
 
