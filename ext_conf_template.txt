@@ -1,0 +1,2 @@
+# cat=basic//; type=boolean; label=Autoload TypoScript: If enabled, the extension will register the TypoScript setup as a Static TypoScript template for inclusion in your template records.
+autoload_typoscript = 1
