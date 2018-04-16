@@ -3,6 +3,14 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="" product-name="local lang module" target-language="fr">
 		<header/>
 		<body>
+			<trans-unit id="Ko">
+				<source>Ko</source>
+				<target></target>
+			</trans-unit>
+			<trans-unit id="Mo">
+				<source>Mo</source>
+				<target></target>
+			</trans-unit>
 			<trans-unit id="fineUploader.message.errorType">
 				<source>{file} has an invalid extension. Valid extension(s): {extensions}.</source>
 				<target></target>
