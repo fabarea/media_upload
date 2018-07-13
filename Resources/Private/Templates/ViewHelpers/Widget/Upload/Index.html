@@ -66,43 +66,46 @@
 		var onLeave = "{f:translate(key: 'fineUploader.message.onLeave')}";
 		var unsupportedBrowserIos8Safari = "{f:translate(key: 'fineUploader.message.unsupportedBrowserIos8Safari')}";
 
-		<![CDATA[
-		if (window.MediaUpload === undefined) {
-			window.MediaUpload = {
-				instances: []
-			};
-		}
-
-		var instance = {
-			id: uploadWidgetIdentifier,
-			settings: {
-				maximumItems: maximumItems,
-				maximumSize: maximumSize,
-				storage: storage,
-				uniqueId: uniqueId,
-				property: property,
-				allowedExtensions: allowedExtensions,
-				messages: {
-					typeError: typeError,
-					sizeError: sizeError,
-					minSizeError: minSizeError,
-					emptyError: emptyError,
-					noFilesError: noFilesError,
-					tooManyItemsError: tooManyItemsError,
-					maxHeightImageError: maxHeightImageError,
-					maxWidthImageError: maxWidthImageError,
-					minHeightImageError: minHeightImageError,
-					minWidthImageError: minWidthImageError,
-					retryFailTooManyItems: retryFailTooManyItems,
-					onLeave: retryFailTooManyItems,
-					unsupportedBrowserIos8Safari: unsupportedBrowserIos8Safari
-				}
-
-			}
-		};
-		MediaUpload.instances.push(instance);
-
-		]]>
-
 	</script>
+
+	<f:format.raw>
+		<script>
+
+			if (window.MediaUpload === undefined) {
+				window.MediaUpload = {
+					instances: []
+				};
+			}
+
+			var instance = {
+				id: uploadWidgetIdentifier,
+				settings: {
+					maximumItems: maximumItems,
+					maximumSize: maximumSize,
+					storage: storage,
+					uniqueId: uniqueId,
+					property: property,
+					allowedExtensions: allowedExtensions,
+					messages: {
+						typeError: typeError,
+						sizeError: sizeError,
+						minSizeError: minSizeError,
+						emptyError: emptyError,
+						noFilesError: noFilesError,
+						tooManyItemsError: tooManyItemsError,
+						maxHeightImageError: maxHeightImageError,
+						maxWidthImageError: maxWidthImageError,
+						minHeightImageError: minHeightImageError,
+						minWidthImageError: minWidthImageError,
+						retryFailTooManyItems: retryFailTooManyItems,
+						onLeave: retryFailTooManyItems,
+						unsupportedBrowserIos8Safari: unsupportedBrowserIos8Safari
+					}
+
+				}
+			};
+			MediaUpload.instances.push(instance);
+
+		</script>
+	</f:format.raw>
 </div>
