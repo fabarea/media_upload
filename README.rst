@@ -128,7 +128,7 @@ to retrieve them and store them into their final location. This code can be used
 				$uploadedFile->getTemporaryFileNameAndPath(),
 				$storage->getRootLevelFolder(),
 				$uploadedFile->getFileName(),
-				'changeName'
+				\TYPO3\CMS\Core\Resource\DuplicationBehavior::RENAME
 			);
 
 			# Note: Use method `addUploadedFile` instead of `addFile` if file is uploaded
