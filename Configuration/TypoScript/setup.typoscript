@@ -22,6 +22,9 @@ plugin.tx_mediaupload {
 		# no value, everybody can upload. No authentication is required. Caution!!
 		allowedFrontendGroups = *
 	}
+
+    # Disable cache hash enforcement
+    features.requireCHashArgumentForActionArguments = 0
 }
 
 #############################
