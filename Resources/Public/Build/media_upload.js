@@ -3462,7 +3462,7 @@ qq.status = {
                 inputName: "qqfile",
                 method: "POST",
                 params: {},
-                paramsInBody: true,
+                paramsInBody: false,
                 totalFileSizeName: "qqtotalfilesize",
                 uuidName: "qquuid"
             },
