@@ -1,4 +1,5 @@
 <?php
+
 namespace Fab\MediaUpload\Command;
 
 /*
@@ -32,8 +33,8 @@ class TemporaryFileCommandController extends CommandController
     {
         $structure = $this->getStructureOfFiles();
 
-        GeneralUtility::rmdir(UploadManager::UPLOAD_FOLDER, true);
-        GeneralUtility::mkdir_deep(UploadManager::UPLOAD_FOLDER);
+        GeneralUtility::rmdir(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER), true);
+        GeneralUtility::mkdir_deep(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER));
 
         $this->outputLine(sprintf('I have removed %s file(s).', $structure['numberOfFiles']));
     }
@@ -56,8 +57,9 @@ class TemporaryFileCommandController extends CommandController
     /**
      * @return array
      */
-    protected function getStructureOfFiles() {
-        $Directory = new RecursiveDirectoryIterator(UploadManager::UPLOAD_FOLDER);
+    protected function getStructureOfFiles()
+    {
+        $Directory = new RecursiveDirectoryIterator(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER));
         $iterator = new RecursiveIteratorIterator($Directory);
 
         $counter = 0;
