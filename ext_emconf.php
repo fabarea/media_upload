@@ -6,8 +6,8 @@ $EM_CONF[$_EXTKEY] = [
     'category' => 'fe',
     'author' => 'Fabien Udriot',
     'author_email' => 'fabien@ecodev.ch',
-    'state' => 'beta',
-    'version' => '2.0.0',
+    'state' => 'stable',
+    'version' => '2.1.0-dev',
     'autoload' => [
         'psr-4' => ['Fab\\MediaUpload\\' => 'Classes']
     ],
