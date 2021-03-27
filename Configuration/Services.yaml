@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Fab\MediaUpload\:
+    resource: '../Classes/*'
+
+  Fab\MediaUpload\Command\TemporaryFileCommand:
+    tags:
+      - name: 'console.command'
+        command: 'mediaupload:removeTempFiles'
