@@ -21,7 +21,7 @@ class UploadController extends AbstractWidgetController
 
     /**
      * @var \Fab\MediaUpload\Service\UploadFileService
-     * @inject
+     * @TYPO3\CMS\Extbase\Annotation\Inject
      */
     protected $uploadFileService;
 

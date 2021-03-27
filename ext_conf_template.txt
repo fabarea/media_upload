@@ -1,2 +1,8 @@
 # cat=basic//; type=boolean; label=Autoload TypoScript: If enabled, the extension will register the TypoScript setup as a Static TypoScript template for inclusion in your template records.
 autoload_typoscript = 1
+
+# cat=basic//; type=string; label=Allows to have stronger restrictions than the genaral TYPo3 settings the upload of files. allowing files, that are restricted from core will not work
+fileExtensionsAllow =
+
+# cat=basic//; type=boolean; label=Allows to have stronger restrictions. set ALLOW to jpg and DENY to * will restrict to JPG files
+fileExtensionsDeny =

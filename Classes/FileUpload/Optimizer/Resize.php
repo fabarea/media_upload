@@ -38,7 +38,7 @@ class Resize implements ImageOptimizerInterface
         $this->storage = $storage;
         $this->gifCreator = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Imaging\\GifBuilder');
         $this->gifCreator->init();
-        $this->gifCreator->absPrefix = PATH_site;
+        $this->gifCreator->absPrefix = \TYPO3\CMS\Core\Core\Environment::getPublicPath() . '/' ;
     }
 
     /**
