@@ -11,3 +11,4 @@ services:
     tags:
       - name: 'console.command'
         command: 'mediaupload:removeTempFiles'
+        schedulable: true
