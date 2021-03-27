@@ -28,7 +28,7 @@ class Rotate implements ImageOptimizerInterface
     {
         $this->gifCreator = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Imaging\\GifBuilder');
         $this->gifCreator->init();
-        $this->gifCreator->absPrefix = PATH_site;
+        $this->gifCreator->absPrefix = \TYPO3\CMS\Core\Core\Environment::getPublicPath() . '/' ;
     }
 
     /**

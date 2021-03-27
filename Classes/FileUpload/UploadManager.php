@@ -16,7 +16,9 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\Security\FileNameValidator;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\File\BasicFileUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -102,6 +104,7 @@ class UploadManager
         $this->checkFileAllowed($fileName);
 
         $saved = $uploadedFile->setInputName($this->getInputName())
+            // @extensionScannerIgnoreLine
             ->setUploadFolder($this->getUploadFolder())
             ->setName($fileName)
             ->save();
@@ -259,38 +262,41 @@ class UploadManager
 
     /**
      * If the fileName is given, check it against the
-     * TYPO3_CONF_VARS[BE][fileDenyPattern] + and if the file extension is allowed
      *
-     * @see \TYPO3\CMS\Core\Resource\ResourceStorage->checkFileExtensionPermission($fileName);
+     * @see typo3/sysext/core/Classes/Resource/Security/FileNameValidator.php
      * @param string $fileName Full filename
      * @return boolean true if extension/filename is allowed
      */
     protected function checkFileExtensionPermission($fileName)
     {
-        $isAllowed = GeneralUtility::verifyFilenameAgainstDenyPattern($fileName);
+        // this nextline does the same as before the whole function
+        $isAllowed =  GeneralUtility::makeInstance(FileNameValidator::class)->isValid((string)$fileName);
         if ($isAllowed) {
 
-            // Set up the permissions for the file extension
-            $fileExtensionPermissions = $GLOBALS['TYPO3_CONF_VARS']['BE']['fileExtensions']['webspace'];
-            $fileExtensionPermissions['allow'] = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['allow']));
-            $fileExtensionPermissions['deny'] = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['deny']));
+            // not really needed
+            // If someone wants to Set up the permissions for the file extension in Extension configuration
+
+            $fileExtensionPermissions = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class) ->get('media_upload');
+
+            $allow = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['fileExtensionsAllow']));
+            $deny = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['fileExtensionsDeny']));
             $fileExtension = $this->getFileExtension($fileName);
             if ($fileExtension !== '') {
                 // If the extension is found amongst the allowed types, we return true immediately
-                if ($fileExtensionPermissions['allow'] === '*' || GeneralUtility::inList($fileExtensionPermissions['allow'], $fileExtension)) {
+                if ( $allow === '*' || $allow == '' || GeneralUtility::inList( $allow , $fileExtension)) {
                     return true;
                 }
                 // If the extension is found amongst the denied types, we return false immediately
-                if ($fileExtensionPermissions['deny'] === '*' || GeneralUtility::inList($fileExtensionPermissions['deny'], $fileExtension)) {
+                if ( $deny === '*' || GeneralUtility::inList($deny, $fileExtension)) {
                     return false;
                 }
                 // If no match we return true
                 return true;
             } else {
-                if ($fileExtensionPermissions['allow'] === '*') {
+                if ( $allow === '*') {
                     return true;
                 }
-                if ($fileExtensionPermissions['deny'] === '*') {
+                if ($deny === '*') {
                     return false;
                 }
                 return true;
@@ -388,7 +394,7 @@ class UploadManager
     public function getUploadFolder()
     {
         if ($this->uploadFolder === null) {
-            $this->uploadFolder = PATH_site . self::UPLOAD_FOLDER;
+            $this->uploadFolder = \TYPO3\CMS\Core\Core\Environment::getPublicPath() . '/' . self::UPLOAD_FOLDER;
 
             $possibleSubFolder = GeneralUtility::_GP('qquuid');
             if (UuidUtility::getInstance()->isValid($possibleSubFolder)) {

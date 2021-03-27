@@ -18,7 +18,7 @@ class ShowUploadedViewHelper extends AbstractWidgetViewHelper
 
     /**
      * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController
-     * @inject
+     * @TYPO3\CMS\Extbase\Annotation\Inject
      */
     protected $controller;
 

@@ -15,6 +15,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 /**
  * Controller which handles actions related to Asset.
@@ -103,11 +104,13 @@ class MediaUploadController extends ActionController
      *
      * @param int $storageIdentifier
      * @return string
-     * @throws \InvalidArgumentException
      */
-    public function uploadAction($storageIdentifier)
+    public function uploadAction(int $storageIdentifier): string
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($storageIdentifier);
+        /** @var ResourceFactory $factory */
+        $factory = GeneralUtility::makeInstance(ResourceFactory::class) ;
+
+        $storage = $factory->getStorageObject($storageIdentifier);
 
         /** @var $uploadManager UploadManager */
         $uploadManager = GeneralUtility::makeInstance(UploadManager::class, $storage);
@@ -129,7 +132,7 @@ class MediaUploadController extends ActionController
     /**
      * Returns an instance of the current Frontend User.
      *
-     * @return \TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication
+     * @return FrontendUserAuthentication
      */
     protected function getFrontendUser()
     {
