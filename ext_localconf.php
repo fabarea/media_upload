@@ -32,10 +32,7 @@ call_user_func(function () {
             'MediaUpload' => 'upload',
         )
     );
-    /** @var \TYPO3\CMS\Core\Information\Typo3Version $version */
-    $version = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Information\Typo3Version');
-    if ($version->getMajorVersion()  < 10) {
-        // Setting up a script that can be run from the cli_dispatch.phpsh script.
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \Fab\MediaUpload\Command\TemporaryFileCommandController::class;
-    }
+    // command line is replaced by symphony command:
+    // ./vendor/bin/typo3cms mediaupload:removeTempFiles rundry=1
+
 });

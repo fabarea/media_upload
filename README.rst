@@ -220,33 +220,32 @@ We must extend the FileReference for the purpose of ``$fileReference->setFile($f
 	}
 
 
-TypoScript
-----------
 
-Finally we must configure the persistence layer of Extbase.
-
-
+Configuration Extbase Persistence
+---------------------------------
 ::
+    Finally we must configure the persistence layer of Extbase.
+    Instead of  configuration via typoscript, you now have to create the followin php file:
+    "YourExtensionFolder"\Configuration\Extbase\Persistance\Classes.php
+    see:
+    https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Breaking-87623-ReplaceConfigpersistenceclassesTyposcriptConfiguration.html
 
-	config.tx_extbase {
-		persistence {
-			# Enable this if you need the reference index to be updated
-			updateReferenceIndex = 1
-			classes {
-				YourVendor\YourExtensionKey\Domain\Model\FileReference {
-					mapping {
-						tableName = sys_file_reference
-						columns {
-							uid_local.mapOnProperty = originalFileIdentifier
-						}
-					}
-				}
-			}
-		}
-		objects {
-			TYPO3\CMS\Extbase\Domain\Model\FileReference.className = YourVendor\YourExtensionKey\Domain\Model\FileReference
-		}
-	}
+
+    <?php
+    declare(strict_types=1);
+    return [
+        YourVendor\YourExtensionKey\Domain\Model\FileReference::class => [
+            'tableName' => 'sys_file_reference',
+            'properties' => [
+                'originalFileIdentifier' => [
+                    'fieldName' => 'uid_local',
+                ],
+            ],
+        ],
+    ];
+
+
+
 
 
 Security
@@ -269,6 +268,10 @@ only allowed Frontend User Group. This behaviour can be configured by TypoScript
 		}
 	}
 
+
+The TYPO3 Behavior of Restriction of allowed / denied Filetypes has changed.
+
+
 Scheduler tasks
 ===============
 
@@ -277,10 +280,10 @@ It could be files are left aside if the user has not finalized the upload.
 The Command can be used via a scheduler task with a low redundancy, once per week as instance::
 
 	# List all temporary files
-	./typo3/cli_dispatch.phpsh extbase temporaryFile:list
+	./vendor/bin/typo3cms mediaupload:removeTempFiles rundry
 
 	# Remove them.
-	./typo3/cli_dispatch.phpsh extbase temporaryFile:flush
+	./vendor/bin/typo3cms mediaupload:removeTempFiles
 
 
 Building assets in development
@@ -319,5 +322,22 @@ While developing, you can use the ``watch`` which will generate the build as you
 	grunt watch
 
 
+
+
 .. _Bower: http://bower.io/
 .. _Grunt: http://gruntjs.com/
+
+
+Version 3.x Breacking Changes
+=============================
+When upgrading vom Version prior 3 to vesion 3 and cahngeing TPO3 version from 9 to 10, the configuration of the
+extbase persistance mapping needs to be  changed from typoscript to a php class.
+see section: Configuration Extbase Persistence
+
+The scheduler Tasks should now be run via TYPO3 Commandline command.
+
+
+Todos for the future
+====================
+
+replace signal Slot calls with PSR-14 middleware requests
