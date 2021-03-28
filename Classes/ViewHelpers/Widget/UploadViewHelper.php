@@ -18,9 +18,15 @@ class UploadViewHelper extends AbstractWidgetViewHelper
 
     /**
      * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\UploadController
-     * @TYPO3\CMS\Extbase\Annotation\Inject
      */
     protected $controller;
+
+    /**
+     * @param \Fab\MediaUpload\ViewHelpers\Widget\Controller\UploadController $controller
+     */
+    public function injectController(\Fab\MediaUpload\ViewHelpers\Widget\Controller\UploadController $controller ) {
+        $this->controller = $controller ;
+    }
 
     /**
      * @return void
