@@ -18,9 +18,15 @@ class ShowUploadedViewHelper extends AbstractWidgetViewHelper
 
     /**
      * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController
-     * @inject
      */
     protected $controller;
+
+    /**
+     * @param \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController $controller
+     */
+    public function injectController(\Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController $controller ) {
+        $this->controller = $controller ;
+    }
 
     /**
      * @return void

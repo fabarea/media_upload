@@ -1,8 +1,13 @@
 <?php
+
+
+
 if (!defined('TYPO3_MODE')) die ('Access denied.');
 
 call_user_func(function () {
-    $configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['media_upload']);
+
+    $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class) ->get('media_upload');
+
     if (false === isset($configuration['autoload_typoscript']) || true === (bool)$configuration['autoload_typoscript']) {
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
             'media_upload',
@@ -27,7 +32,7 @@ call_user_func(function () {
             'MediaUpload' => 'upload',
         )
     );
+    // command line is replaced by symphony command:
+    // ./vendor/bin/typo3cms mediaupload:removeTempFiles rundry=1
 
-// Setting up a script that can be run from the cli_dispatch.phpsh script.
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \Fab\MediaUpload\Command\TemporaryFileCommandController::class;
 });

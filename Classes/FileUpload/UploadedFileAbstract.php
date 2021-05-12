@@ -86,7 +86,7 @@ abstract class UploadedFileAbstract implements UploadedFileInterface
      */
     public function getPublicUrl()
     {
-        $fileNameAndPath = str_replace(PATH_site, '', $this->getFileWithAbsolutePath());
+        $fileNameAndPath = str_replace(\TYPO3\CMS\Core\Core\Environment::getPublicPath() . '/' , '', $this->getFileWithAbsolutePath());
         return '/' . ltrim($fileNameAndPath, '/');
     }
 

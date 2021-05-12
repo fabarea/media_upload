@@ -18,9 +18,15 @@ class ShowUploadedController extends AbstractWidgetController
 
     /**
      * @var \Fab\MediaUpload\Service\UploadFileService
-     * @inject
      */
     protected $uploadFileService;
+
+    /**
+     * @param \Fab\MediaUpload\Service\UploadFileService $uploadFileService
+     */
+    public function injectController(\Fab\MediaUpload\Service\UploadFileService $uploadFileService ) {
+        $this->uploadFileService = $uploadFileService ;
+    }
 
     /**
      * @return void
