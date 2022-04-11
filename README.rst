@@ -121,7 +121,7 @@ to retrieve them and store them into their final location. This code can be used
 			/** @var \Fab\MediaUpload\UploadedFile $uploadedFile */
 			$uploadedFile->getTemporaryFileNameAndPath();
 
-			$storage = ResourceFactory::getInstance()->getStorageObject(1);
+			$storage = GeneralUtility::makeInstance(ResourceFactory::class)->getStorageObject(1);
 
 			/** @var File $file */
 			$file = $storage->addFile(
