@@ -8,41 +8,63 @@ namespace Fab\MediaUpload\ViewHelpers\Widget;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
+use Fab\MediaUpload\Service\UploadFileService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Widget which displays a media upload.
  */
-class ShowUploadedViewHelper extends AbstractWidgetViewHelper
+class ShowUploadedViewHelper extends AbstractViewHelper
 {
-
-    /**
-     * @var \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController
-     */
-    protected $controller;
-
-    /**
-     * @param \Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController $controller
-     */
-    public function injectController(\Fab\MediaUpload\ViewHelpers\Widget\Controller\ShowUploadedController $controller ) {
-        $this->controller = $controller ;
-    }
-
     /**
      * @return void
      */
     public function initializeArguments()
     {
-        $this->registerArgument('property', 'int', 'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields', FALSE, '');
+        $this->registerArgument(
+            'property',
+            'int',
+            'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields',
+            false,
+            '',
+        );
+    }
+    public function render(): string
+    {
+        $uploadFileService = GeneralUtility::makeInstance(
+            UploadFileService::class,
+        );
+
+        return static::renderStatic(
+            [
+                'property' => $this->arguments['property'],
+                'uploadedFileList' => $uploadFileService->getUploadedFileList(
+                    $this->arguments['property'],
+                ),
+                'uploadedFiles' => $uploadFileService->getUploadedFiles(
+                    $this->arguments['property'],
+                ),
+            ],
+            $this->buildRenderChildrenClosure(),
+            $this->renderingContext,
+        );
     }
 
-    /**
-     * Returns an carousel widget
-     *
-     * @return string
-     */
-    public function render()
-    {
-        return $this->initiateSubRequest();
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ): string {
+        /** @var StandaloneView $view */
+        $view = GeneralUtility::makeInstance(StandaloneView::class);
+
+        $view->setTemplatePathAndFilename(
+            'EXT:media_upload/Resources/Private/Templates/ViewHelpers/Widget/ShowUploaded/Index.html',
+        );
+        $view->assignMultiple($arguments);
+        return $view->render();
     }
 }

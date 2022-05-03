@@ -25,9 +25,6 @@ class MediaUploadController extends ActionController
 
     /**
      * Initialize actions. These actions are meant to be called by an logged-in FE User.
-     * @throws \TYPO3\CMS\Core\Resource\Exception
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
      */
     public function initializeAction()
     {
@@ -63,9 +60,6 @@ class MediaUploadController extends ActionController
      * Delete a file being just uploaded.
      *
      * @return string
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \InvalidArgumentException
      */
     public function deleteAction()
     {
@@ -143,8 +137,6 @@ class MediaUploadController extends ActionController
      * Signal that is emitted before upload processing is called.
      *
      * @return void
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      */
     protected function emitBeforeHandleUploadSignal()
     {
