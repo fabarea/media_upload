@@ -45,12 +45,7 @@ page_1386871773 {
         userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
         vendorName = Fab
         extensionName = MediaUpload
-        pluginName = Pi1
-		switchableControllerActions {
-			MediaUpload {
-				1 = upload
-			}
-		}
+        pluginName = Upload
     }
 }
 
@@ -70,14 +65,8 @@ page_1386871774 {
     10 = USER_INT
     10 {
         userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
-
         vendorName = Fab
         extensionName = MediaUpload
-        pluginName = Pi1
-        switchableControllerActions {
-            MediaUpload {
-                1 = delete
-            }
-        }
+        pluginName = Delete
     }
 }

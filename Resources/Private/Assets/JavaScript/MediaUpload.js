@@ -72,7 +72,7 @@
 					})
 					.on('submit', {_settings: settings}, function(event) {
 						var params = {};
-						var parameterPrefix = 'tx_mediaupload_pi1';
+						var parameterPrefix = 'tx_mediaupload_upload';
 						params[parameterPrefix + '[storageIdentifier]'] = event.data._settings.storage;
 						params['type'] = '1386871773';
 						$(this).fineUploader('setParams', params);

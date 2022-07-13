@@ -8,9 +8,7 @@ namespace Fab\MediaUpload\ViewHelpers\Widget;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\Media\Utility\PermissionUtility;
 use Fab\MediaUpload\Service\UploadFileService;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -66,38 +64,55 @@ class UploadViewHelper extends AbstractViewHelper
             );
     }
 
-    public function render(): string
-    {
-        $uploadFileService = GeneralUtility::makeInstance(
-            UploadFileService::class,
-        );
-
-        return static::renderStatic(
-            [
-                'allowedExtensions' => $this->arguments['allowedExtensions'],
-                'maximumSize' => $this->arguments['maximumSize'],
-                'maximumSizeLabel' => self::getMaximumSizeLabel(
-                    (int) $this->arguments['maximumSize'],
-                ),
-                'sizeUnit' => $this->arguments['sizeUnit'],
-                'storage' => $this->arguments['storage'],
-                'maximumItems' => $this->arguments['maximumItems'],
-                'property' => $this->arguments['property'],
-                'uploadedFileList' => $uploadFileService->getUploadedFileList(
-                    $this->arguments['property'],
-                ),
-                'widgetIdentifier' => uniqid(),
-            ],
-            $this->buildRenderChildrenClosure(),
-            $this->renderingContext,
-        );
-    }
+    #public function render(): string
+    #{
+    #    $uploadFileService = GeneralUtility::makeInstance(
+    #        UploadFileService::class,
+    #    );
+    #    return static::renderStatic(
+    #        [
+    #            'allowedExtensions' => $this->arguments['allowedExtensions'],
+    #            'maximumSize' => $this->arguments['maximumSize'],
+    #            'maximumSizeLabel' => 'qwer' . self::getMaximumSizeLabel(
+    #                (int) $this->arguments['maximumSize'],
+    #            ),
+    #            'sizeUnit' => $this->arguments['sizeUnit'],
+    #            'storage' => $this->arguments['storage'],
+    #            'maximumItems' => $this->arguments['maximumItems'],
+    #            'property' => $this->arguments['property'],
+    #            'uploadedFileList' => $uploadFileService->getUploadedFileList(
+    #                $this->arguments['property'],
+    #            ),
+    #            'widgetIdentifier' => uniqid(),
+    #        ],
+    #        $this->buildRenderChildrenClosure(),
+    #        $this->renderingContext,
+    #    );
+    #}
 
     public static function renderStatic(
         array $arguments,
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ): string {
+
+        $uploadFileService = GeneralUtility::makeInstance(
+            UploadFileService::class,
+        );
+
+        $arguments['maximumSizeLabel'] = self::getMaximumSizeLabel(
+            (int)$arguments['maximumSize'],
+        );
+
+        if ($arguments['maximumSize'] === 0) {
+            $arguments['maximumSize'] = GeneralUtility::getMaxUploadFileSize() * 1024;
+        }
+
+        $arguments['uploadedFileList'] = $uploadFileService->getUploadedFileList(
+            $arguments['property'],
+        );
+
+        $arguments['widgetIdentifier'] = uniqid();
         /** @var StandaloneView $view */
         $view = GeneralUtility::makeInstance(StandaloneView::class);
 
@@ -124,7 +139,7 @@ class UploadViewHelper extends AbstractViewHelper
      */
     public static function getUploadedFileList($property = ''): string
     {
-        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_pi1');
+        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_upload');
         return empty($parameters['uploadedFiles'][$property])
             ? ''
             : $parameters['uploadedFiles'][$property];

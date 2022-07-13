@@ -32,26 +32,26 @@ class ShowUploadedViewHelper extends AbstractViewHelper
             '',
         );
     }
-    public function render(): string
-    {
-        $uploadFileService = GeneralUtility::makeInstance(
-            UploadFileService::class,
-        );
-
-        return static::renderStatic(
-            [
-                'property' => $this->arguments['property'],
-                'uploadedFileList' => $uploadFileService->getUploadedFileList(
-                    $this->arguments['property'],
-                ),
-                'uploadedFiles' => $uploadFileService->getUploadedFiles(
-                    $this->arguments['property'],
-                ),
-            ],
-            $this->buildRenderChildrenClosure(),
-            $this->renderingContext,
-        );
-    }
+    #public function render(): string
+    #{
+    #    $uploadFileService = GeneralUtility::makeInstance(
+    #        UploadFileService::class,
+    #    );
+    #
+    #    return static::renderStatic(
+    #        [
+    #            'property' => $this->arguments['property'],
+    #            'uploadedFileList' => $uploadFileService->getUploadedFileList(
+    #                $this->arguments['property'],
+    #            ),
+    #            'uploadedFiles' => $uploadFileService->getUploadedFiles(
+    #                $this->arguments['property'],
+    #            ),
+    #        ],
+    #        $this->buildRenderChildrenClosure(),
+    #        $this->renderingContext,
+    #    );
+    #}
 
     public static function renderStatic(
         array $arguments,

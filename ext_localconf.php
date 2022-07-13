@@ -1,6 +1,7 @@
 <?php
 
 
+use Fab\MediaUpload\Controller\MediaUploadController;
 
 if (!defined('TYPO3_MODE')) die ('Access denied.');
 
@@ -22,15 +23,27 @@ call_user_func(function () {
     }
 
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Fab.media_upload',
-        'Pi1',
-        array(
-            'MediaUpload' => 'upload',
-        ),
+        'MediaUpload',
+        'Upload',
+        [
+            MediaUploadController::class => 'upload',
+        ],
         // non-cacheable actions
-        array(
-            'MediaUpload' => 'upload',
-        )
+        [
+            MediaUploadController::class => 'upload',
+        ]
+    );
+
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+        'MediaUpload',
+        'Delete',
+        [
+            MediaUploadController::class => 'delete',
+        ],
+        // non-cacheable actions
+        [
+            MediaUploadController::class => 'delete',
+        ]
     );
     // command line is replaced by symphony command:
     // ./vendor/bin/typo3cms mediaupload:removeTempFiles rundry=1

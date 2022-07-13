@@ -10,7 +10,7 @@
 * Repository: git://github.com/FineUploader/fine-uploader.git
 *
 * Licensed only under the MIT license (http://fineuploader.com/licensing).
-*/ 
+*/
 
 
 (function(global) {
@@ -10732,9 +10732,9 @@ qq.extend(qq.Scaler.prototype, {
 
 qq.ExifRestorer = (function()
 {
-   
+
 	var ExifRestorer = {};
-	 
+
     ExifRestorer.KEY_STR = "ABCDEFGHIJKLMNOP" +
                          "QRSTUVWXYZabcdef" +
                          "ghijklmnopqrstuv" +
@@ -10775,7 +10775,7 @@ qq.ExifRestorer = (function()
 
         return output;
     };
-    
+
     ExifRestorer.restore = function(origFileBase64, resizedFileBase64)
     {
         var expectedBase64Header = "data:image/jpeg;base64,";
@@ -10783,15 +10783,15 @@ qq.ExifRestorer = (function()
         if (!origFileBase64.match(expectedBase64Header))
         {
         	return resizedFileBase64;
-        }       
-        
+        }
+
         var rawImage = this.decode64(origFileBase64.replace(expectedBase64Header, ""));
         var segments = this.slice2Segments(rawImage);
-                
+
         var image = this.exifManipulation(resizedFileBase64, segments);
-        
+
         return expectedBase64Header + this.encode64(image);
-        
+
     };
 
 
@@ -10835,7 +10835,7 @@ qq.ExifRestorer = (function()
     };
 
 
-    
+
     ExifRestorer.slice2Segments = function(rawImageArray)
     {
         var head = 0,
@@ -10863,8 +10863,8 @@ qq.ExifRestorer = (function()
     };
 
 
-    
-    ExifRestorer.decode64 = function(input) 
+
+    ExifRestorer.decode64 = function(input)
     {
         var output = "",
             chr1, chr2, chr3 = "",
@@ -10907,7 +10907,7 @@ qq.ExifRestorer = (function()
         return buf;
     };
 
-    
+
     return ExifRestorer;
 })();
 
@@ -11791,7 +11791,7 @@ else {
 					})
 					.on('submit', {_settings: settings}, function(event) {
 						var params = {};
-						var parameterPrefix = 'tx_mediaupload_pi1';
+						var parameterPrefix = 'tx_mediaupload_upload';
 						params[parameterPrefix + '[storageIdentifier]'] = event.data._settings.storage;
 						params['type'] = '1386871773';
 						$(this).fineUploader('setParams', params);
