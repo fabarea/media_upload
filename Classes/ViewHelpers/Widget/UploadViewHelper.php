@@ -19,6 +19,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class UploadViewHelper extends AbstractViewHelper
 {
+    protected $escapeOutput = false;
+
     public function initializeArguments()
     {
         $this->registerArgument(
