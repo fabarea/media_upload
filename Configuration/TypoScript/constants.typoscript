@@ -1,0 +1,5 @@
+plugin.tx_mediaupload.view {
+  templateRootPath = EXT:media_upload/Resources/Private/Templates/
+  partialRootPath = EXT:media_upload/Resources/Private/Partials/
+  layoutRootPath = EXT:media_upload/Resources/Private/Layouts/
+}

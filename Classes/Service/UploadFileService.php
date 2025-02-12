@@ -9,8 +9,9 @@ namespace Fab\MediaUpload\Service;
  */
 
 use Fab\MediaUpload\FileUpload\UploadManager;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Fab\MediaUpload\UploadedFile;
+use Fab\MediaUpload\FileUpload\UploadedFile;
 
 /**
  * Uploaded files service.
@@ -22,11 +23,12 @@ class UploadFileService
      * Return the list of uploaded files.
      *
      * @param string $property
+     * @param ServerRequestInterface $request
      * @return string
      */
-    public function getUploadedFileList($property = '')
+    public function getUploadedFileList($request, $property = '')
     {
-        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_upload');
+        $parameters = $request->getParsedBody()["tx_mediaupload_pi1"] ?? $request->getQueryParams()["tx_mediaupload_pi1"] ?? [];
         return empty($parameters['uploadedFiles'][$property]) ? '' : $parameters['uploadedFiles'][$property];
     }
 
@@ -34,14 +36,15 @@ class UploadFileService
      * Return an array of uploaded files, done in a previous step.
      *
      * @param string $property
+     * @param ServerRequestInterface $request
      * @return UploadedFile[]
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function getUploadedFiles($property = '')
+    public function getUploadedFiles($request, $property = '')
     {
         $files = array();
-        $uploadedRelativeFiles = GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE);
+        $uploadedRelativeFiles = GeneralUtility::trimExplode(',', $this->getUploadedFileList($request, $property), TRUE);
 
         $uploadedFiles = array_map(function ($item) {
             return UploadManager::UPLOAD_FOLDER.'/'.$item;
@@ -103,13 +106,14 @@ class UploadFileService
      * Return the first uploaded files, done in a previous step.
      *
      * @param string $property
+     * @param ServerRequestInterface $request
      * @return array
      */
-    public function getUploadedFile($property = '')
+    public function getUploadedFile($request, $property = '')
     {
         $uploadedFile = array();
 
-        $uploadedFiles = $this->getUploadedFiles($property);
+        $uploadedFiles = $this->getUploadedFiles($request, $property);
         if (!empty($uploadedFiles)) {
             $uploadedFile = current($uploadedFiles);
         }
@@ -121,11 +125,12 @@ class UploadFileService
      * Count uploaded files.
      *
      * @param string $property
-     * @return array
+     * @param ServerRequestInterface $request
+     * @return int
      */
-    public function countUploadedFiles($property = '')
+    public function countUploadedFiles($request, $property = '')
     {
-        return count(GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE));
+        return count(GeneralUtility::trimExplode(',', $this->getUploadedFileList($request, $property), TRUE));
     }
 
 }

@@ -1,14 +1,31 @@
 services:
   _defaults:
-    autowire: true
+    autowire: false
     autoconfigure: true
     public: false
 
   Fab\MediaUpload\:
     resource: '../Classes/*'
+    exclude:
+      - '../Classes/Domain/Model/*'
+    public: true
 
-  Fab\MediaUpload\Command\TemporaryFileCommand:
-    tags:
-      - name: 'console.command'
-        command: 'mediaupload:removeTempFiles'
-        schedulable: true
+  Fab\MediaUpload\ViewHelpers\:
+    autowire: true
+    resource: '../Classes/ViewHelpers/*'
+
+  Fab\MediaUpload\Controller\:
+    autowire: true
+    resource: '../Classes/Controller/*'
+
+  Fab\MediaUpload\FileUpload\UploadManager:
+    autowire: true
+
+
+
+
+#  Fab\MediaUpload\Command\TemporaryFileCommand:
+#    tags:
+#      - name: 'console.command'
+#        command: 'mediaupload:removeTempFiles'
+#        schedulable: true

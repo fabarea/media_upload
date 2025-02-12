@@ -37,7 +37,7 @@ abstract class UploadedFileAbstract implements UploadedFileInterface
      * @return int
      * @throws \RuntimeException
      */
-    public function getType()
+    public function getType(): int
     {
         $this->checkFileExistence();
 

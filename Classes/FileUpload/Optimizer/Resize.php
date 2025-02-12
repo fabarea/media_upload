@@ -12,6 +12,8 @@ use Fab\Media\Module\MediaModule;
 use Fab\MediaUpload\Dimension;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\MediaUpload\FileUpload\ImageOptimizerInterface;
+use \Fab\MediaUpload\FileUpload\UploadedFileInterface;
+use \TYPO3\CMS\Core\Resource\ResourceStorage;
 
 /**
  * Class that optimize an image according to some settings.
@@ -22,18 +24,17 @@ class Resize implements ImageOptimizerInterface
     /**
      * @var \TYPO3\CMS\Frontend\Imaging\GifBuilder
      */
-    protected $gifCreator;
+    protected mixed $gifCreator;
 
     /**
-     * @var \TYPO3\CMS\Core\Resource\ResourceStorage
+     * @var ResourceStorage
      */
-    protected $storage;
+    protected ?ResourceStorage $storage;
 
     /**
-     * @param \TYPO3\CMS\Core\Resource\ResourceStorage $storage
-     * @return Resize
+     * @param ResourceStorage|null $storage
      */
-    public function __construct($storage = NULL)
+    public function __construct(ResourceStorage $storage = NULL)
     {
         $this->storage = $storage;
         $this->gifCreator = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Imaging\\GifBuilder');
@@ -44,12 +45,12 @@ class Resize implements ImageOptimizerInterface
     /**
      * Optimize the given uploaded image.
      *
-     * @param \Fab\MediaUpload\FileUpload\UploadedFileInterface $uploadedFile
+     * @param UploadedFileInterface $uploadedFile
      * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      * @throws \Exception
      * @throws \InvalidArgumentException
      */
-    public function optimize($uploadedFile)
+    public function optimize(UploadedFileInterface $uploadedFile): UploadedFileInterface
     {
         $imageInfo = getimagesize($uploadedFile->getFileWithAbsolutePath());
 
@@ -60,7 +61,7 @@ class Resize implements ImageOptimizerInterface
             $storageRecord = $this->storage->getStorageRecord();
         }
 
-        if (strlen($storageRecord['maximum_dimension_original_image']) > 0) {
+        if (isset($storageRecord) && strlen($storageRecord['maximum_dimension_original_image'] ?? "") > 0) {
 
             /** @var Dimension $imageDimension */
             $imageDimension = GeneralUtility::makeInstance(Dimension::class, $storageRecord['maximum_dimension_original_image']);

@@ -38,7 +38,7 @@ class StreamedFile extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      * @return boolean TRUE on success
      * @throws \RuntimeException
      */
-    public function save()
+    public function save(): bool
     {
 
         if (is_null($this->uploadFolder)) {
@@ -71,7 +71,7 @@ class StreamedFile extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      *
      * @return string
      */
-    public function getOriginalName()
+    public function getOriginalName(): string
     {
         return $_GET[$this->inputName];
     }
@@ -82,7 +82,7 @@ class StreamedFile extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      * @throws \Exception
      * @return integer file-size in byte
      */
-    public function getSize()
+    public function getSize(): int
     {
         if (isset($GLOBALS['_SERVER']['CONTENT_LENGTH'])) {
             return (int)$GLOBALS['_SERVER']['CONTENT_LENGTH'];
@@ -96,7 +96,7 @@ class StreamedFile extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      *
      * @return string|boolean MIME type. eg, text/html, FALSE on error
      */
-    public function getMimeType()
+    public function getMimeType(): bool|string
     {
         $this->checkFileExistence();
         if (function_exists('finfo_file')) {

@@ -9,6 +9,7 @@ namespace Fab\MediaUpload\FileUpload\Optimizer;
  */
 
 use Fab\MediaUpload\FileUpload\ImageOptimizerInterface;
+use \Fab\MediaUpload\FileUpload\UploadedFileInterface;
 
 /**
  * Class that optimize an image according to some settings.
@@ -34,10 +35,10 @@ class Rotate implements ImageOptimizerInterface
     /**
      * Optimize the given uploaded image
      *
-     * @param \Fab\MediaUpload\FileUpload\UploadedFileInterface $uploadedFile
+     * @param UploadedFileInterface $uploadedFile
      * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
      */
-    public function optimize($uploadedFile)
+    public function optimize(UploadedFileInterface $uploadedFile): UploadedFileInterface
     {
 
         $orientation = $this->getOrientation($uploadedFile->getFileWithAbsolutePath());

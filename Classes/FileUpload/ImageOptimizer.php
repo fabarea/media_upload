@@ -10,6 +10,7 @@ namespace Fab\MediaUpload\FileUpload;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Http\UploadedFile;
 
 /**
  * Class that optimize an image according to some settings.
@@ -41,10 +42,10 @@ class ImageOptimizer implements SingletonInterface
     /**
      * Constructor
      *
-     * @return \Fab\MediaUpload\FileUpload\ImageOptimizer
      * @param \TYPO3\CMS\Core\Resource\ResourceStorage $storage
+     *@return \Fab\MediaUpload\FileUpload\ImageOptimizer
      */
-    public function __construct($storage = NULL)
+    public function __construct(\TYPO3\CMS\Core\Resource\ResourceStorage $storage = NULL)
     {
         $this->storage = $storage;
         $this->add('Fab\MediaUpload\FileUpload\Optimizer\Resize');
@@ -82,7 +83,7 @@ class ImageOptimizer implements SingletonInterface
      * @param UploadedFileInterface $uploadedFile
      * @return UploadedFileInterface
      */
-    public function optimize(UploadedFileInterface $uploadedFile)
+    public function optimize(UploadedFileInterface $uploadedFile): UploadedFileInterface
     {
 
         foreach ($this->optimizers as $optimizer) {

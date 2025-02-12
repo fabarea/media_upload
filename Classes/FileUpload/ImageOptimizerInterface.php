@@ -1,6 +1,8 @@
 <?php
 namespace Fab\MediaUpload\FileUpload;
 
+
+
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
  *
@@ -17,8 +19,8 @@ interface ImageOptimizerInterface
     /**
      * Optimize the given uploaded image
      *
-     * @param \Fab\MediaUpload\FileUpload\UploadedFileInterface $uploadedFile
-     * @return \Fab\MediaUpload\FileUpload\UploadedFileInterface
+     * @param UploadedFileInterface $uploadedFile
+     * @return UploadedFileInterface
      */
-    public function optimize($uploadedFile);
+    public function optimize(UploadedFileInterface $uploadedFile): UploadedFileInterface;
 }

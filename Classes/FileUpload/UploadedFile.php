@@ -1,5 +1,5 @@
 <?php
-namespace Fab\MediaUpload;
+namespace Fab\MediaUpload\FileUpload;
 
 /*
  * This file is part of the Fab/MediaUpload project under GPLv2 or later.
@@ -19,34 +19,34 @@ class UploadedFile
      *
      * @var string
      */
-    protected $temporaryFileNameAndPath;
+    protected string $temporaryFileNameAndPath;
 
     /**
      * The final file name.
      *
      * @var string
      */
-    protected $fileName;
+    protected string $fileName;
 
     /**
      * The sanitized final file name for FE display.
      *
      * @var string
      */
-    protected $sanitizedFileName;
+    protected string $sanitizedFileName;
 
     /**
      * Size of the file if available.
      *
      * @var int
      */
-    protected $size;
+    protected int $size;
 
     /**
      * @param string $fileName
      * @return $this
      */
-    public function setFileName($fileName)
+    public function setFileName(string $fileName): static
     {
         $this->fileName = $fileName;
         return $this;
@@ -55,7 +55,7 @@ class UploadedFile
     /**
      * @return string
      */
-    public function getFileName()
+    public function getFileName(): string
     {
         return $this->fileName;
     }
@@ -64,7 +64,7 @@ class UploadedFile
      * @param int $size
      * @return $this
      */
-    public function setSize($size)
+    public function setSize(int $size): static
     {
         $this->size = $size;
         return $this;
@@ -73,7 +73,7 @@ class UploadedFile
     /**
      * @return int
      */
-    public function getSize()
+    public function getSize(): int
     {
         return $this->size;
     }
@@ -82,7 +82,7 @@ class UploadedFile
      * @param string $temporaryFileNameAndPath
      * @return $this
      */
-    public function setTemporaryFileNameAndPath($temporaryFileNameAndPath)
+    public function setTemporaryFileNameAndPath(string $temporaryFileNameAndPath): static
     {
         $this->temporaryFileNameAndPath = $temporaryFileNameAndPath;
         return $this;
@@ -91,7 +91,7 @@ class UploadedFile
     /**
      * @return string
      */
-    public function getTemporaryFileNameAndPath()
+    public function getTemporaryFileNameAndPath(): string
     {
         return $this->temporaryFileNameAndPath;
     }

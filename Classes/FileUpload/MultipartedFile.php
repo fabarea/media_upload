@@ -26,7 +26,7 @@ class MultipartedFile extends UploadedFileAbstract
      *
      * @return boolean TRUE on success
      */
-    public function save()
+    public function save(): bool
     {
         return move_uploaded_file($_FILES[$this->inputName]['tmp_name'], $this->getFileWithAbsolutePath());
     }

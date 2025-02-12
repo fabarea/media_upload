@@ -26,26 +26,26 @@ class TemporaryFileCommand extends Command {
     /**
      * @var array
      */
-    private $allowedTables = [] ;
+    private array $allowedTables = [] ;
 
     /**
      * @var array
      */
-    private $extConf = [] ;
+    private array $extConf = [] ;
 
 
 
     /**
      * Configure the command by defining the name, options and arguments
      */
-    protected function configure()
+    protected function configure(): void
     {
-        $this->setDescription('Remove temporarely files from Media Upload.')
+        $this->setDescription('Remove temporary files from Media Upload.')
             ->setHelp('Get list of Options: .' . LF . 'use the --help option.')
             ->addArgument(
                 'rundry',
                 InputArgument::OPTIONAL,
-                'if rundry is given, will only List files ',
+                'if rundry is set, will only list files ',
                 '0' );
     }
 
@@ -84,7 +84,7 @@ class TemporaryFileCommand extends Command {
         } else {
             GeneralUtility::rmdir(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER), true);
             GeneralUtility::mkdir_deep(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER));
-            $io->writeln(sprintf(sprintf('I have removed %s file(s).', $structure['numberOfFiles']) ) );
+            $io->writeln(sprintf('I have removed %s file(s).', $structure['numberOfFiles']));
             return 0 ;
         }
 
@@ -93,7 +93,7 @@ class TemporaryFileCommand extends Command {
     /**
      * @return array
      */
-    protected function getStructureOfFiles()
+    protected function getStructureOfFiles(): array
     {
         if( !is_dir(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER))) {
             mkdir(GeneralUtility::getFileAbsFileName(UploadManager::UPLOAD_FOLDER)) ;

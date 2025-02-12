@@ -10,11 +10,14 @@ namespace Fab\MediaUpload\Controller;
 
 use Fab\MediaUpload\FileUpload\UploadManager;
 use Fab\MediaUpload\Utility\UuidUtility;
+use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use TYPO3\CMS\Core\Http\Dispatcher;
+use TYPO3\CMS\Core\Http\PropagateResponseException;
 use TYPO3\CMS\Core\Resource\Exception;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 /**
@@ -24,10 +27,12 @@ class MediaUploadController extends ActionController
 {
 
     /**
-     * Initialize actions. These actions are meant to be called by an logged-in FE User.
+     * Initialize actions. These actions are meant to be called by a logged-in FE User.
+     * @throws \TYPO3\CMS\Core\Resource\Exception
      */
-    public function initializeAction()
+    public function initializeAction(): void
     {
+        parent::initializeAction();
 
         // Perhaps it should go into a validator?
         // Check permission before executing any action.
@@ -53,17 +58,22 @@ class MediaUploadController extends ActionController
             }
         }
 
-        $this->emitBeforeHandleUploadSignal();
+        // todo is this used anywhere
+//        $this->emitBeforeHandleUploadSignal();
     }
 
     /**
      * Delete a file being just uploaded.
      *
-     * @return string
+     * @return ResponseInterface
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     * @throws \InvalidArgumentException
+     * @throws PropagateResponseException
      */
-    public function deleteAction()
+    public function deleteAction(): ResponseInterface
     {
-        $folderIdentifier = GeneralUtility::_POST('qquuid');
+        $folderIdentifier = $this->request->getParsedBody()['qquuid'] ?? null;
 
         $error = '';
 
@@ -72,7 +82,8 @@ class MediaUploadController extends ActionController
 
             /** @var UploadManager $uploadManager */
             $uploadManager = GeneralUtility::makeInstance(UploadManager::class);
-            $uploadFolderPath = $uploadManager->getUploadFolder();
+
+            $uploadFolderPath = $uploadManager->getUploadFolder($folderIdentifier);
 
             if (is_dir($uploadFolderPath)) {
                 $isRemoved = GeneralUtility::rmdir($uploadFolderPath, true);
@@ -90,16 +101,16 @@ class MediaUploadController extends ActionController
             $this->throwStatus(404, $error);
         }
 
-        return json_encode(['success' => true]);
+        return $this->jsonResponse(json_encode(['success' => true]));
     }
 
     /**
      * Handle file upload.
      *
      * @param int $storageIdentifier
-     * @return string
+     * @return ResponseInterface
      */
-    public function uploadAction(int $storageIdentifier): string
+    public function uploadAction(int $storageIdentifier): ResponseInterface
     {
         /** @var ResourceFactory $factory */
         $factory = GeneralUtility::makeInstance(ResourceFactory::class) ;
@@ -110,7 +121,7 @@ class MediaUploadController extends ActionController
         $uploadManager = GeneralUtility::makeInstance(UploadManager::class, $storage);
 
         try {
-            $uploadedFile = $uploadManager->handleUpload();
+            $uploadedFile = $uploadManager->handleUpload($this->request);
 
             $result = [
                 'success' => true,
@@ -120,7 +131,7 @@ class MediaUploadController extends ActionController
             $result = ['error' => $e->getMessage()];
         }
 
-        return json_encode($result);
+        return $this->htmlResponse(json_encode($result));
     }
 
     /**
@@ -128,28 +139,30 @@ class MediaUploadController extends ActionController
      *
      * @return FrontendUserAuthentication
      */
-    protected function getFrontendUser()
+    protected function getFrontendUser(): FrontendUserAuthentication
     {
         return $GLOBALS['TSFE']->fe_user;
     }
-
-    /**
-     * Signal that is emitted before upload processing is called.
-     *
-     * @return void
-     */
-    protected function emitBeforeHandleUploadSignal()
-    {
-        $this->getSignalSlotDispatcher()->dispatch(MediaUploadController::class, 'beforeHandleUpload');
-    }
-
-    /**
-     * Get the SignalSlot dispatcher.
-     *
-     * @return Dispatcher
-     */
-    protected function getSignalSlotDispatcher()
-    {
-        return $this->objectManager->get(Dispatcher::class);
-    }
+//
+//    /**
+//     * Signal that is emitted before upload processing is called.
+//     *
+//     * @return void
+//     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
+//     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
+//     */
+//    protected function emitBeforeHandleUploadSignal()
+//    {
+//        $this->getSignalSlotDispatcher()->dispatch(MediaUploadController::class, 'beforeHandleUpload');
+//    }
+//
+//    /**
+//     * Get the SignalSlot dispatcher.
+//     *
+//     * @return Dispatcher
+//     */
+//    protected function getSignalSlotDispatcher()
+//    {
+//        return GeneralUtility::makeInstance(Dispatcher::class);
+//    }
 }

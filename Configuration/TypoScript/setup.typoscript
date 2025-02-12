@@ -1,17 +1,15 @@
-config.tx_extbase {
-	view {
-		widget {
-			Fab\MediaUpload\ViewHelpers\Widget\UploadViewHelper {
-				templateRootPath = EXT:media_upload/Resources/Private/Templates
-			}
-			Fab\MediaUpload\ViewHelpers\Widget\ShowUploadedViewHelper {
-                templateRootPath = EXT:media_upload/Resources/Private/Templates
-            }
-		}
-	}
-}
-
 plugin.tx_mediaupload {
+  view {
+    templateRootPaths {
+      10 = {$plugin.tx_mediaupload.view.templateRootPath}
+    }
+    partialRootPaths {
+      10 = {$plugin.tx_mediaupload.view.partialRootPath}
+    }
+    layoutRootPaths {
+      10 = {$plugin.tx_mediaupload.view.layoutRootPath}
+    }
+  }
 
 	settings {
 
@@ -32,21 +30,18 @@ plugin.tx_mediaupload {
 #############################
 page_1386871773 = PAGE
 page_1386871773 {
-    typeNum = 1386871773
-    config {
-        xhtml_cleaning = 0
-        admPanel = 0
-        disableAllHeaderCode = 1
-        additionalHeaders = Content-type:text/json
-        debug = 0
-    }
-    10 = USER_INT
-    10 {
-        userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
-        vendorName = Fab
-        extensionName = MediaUpload
-        pluginName = Upload
-    }
+  typeNum = 1386871773
+  config {
+    disableAllHeaderCode = 1
+    admPanel = 0
+    debug = 0
+  }
+
+  10 = EXTBASEPLUGIN
+  10 {
+    extensionName = MediaUpload
+    pluginName = Upload
+  }
 }
 
 ################################
@@ -55,18 +50,15 @@ page_1386871773 {
 page_1386871774 = PAGE
 page_1386871774 {
     typeNum = 1386871774
-    config {
-        xhtml_cleaning = 0
-        admPanel = 0
-        disableAllHeaderCode = 1
-        additionalHeaders = Content-type:text/json
-        debug = 0
-    }
-    10 = USER_INT
-    10 {
-        userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
-        vendorName = Fab
-        extensionName = MediaUpload
-        pluginName = Delete
-    }
+  config {
+    disableAllHeaderCode = 1
+    admPanel = 0
+    debug = 0
+  }
+
+  10 = EXTBASEPLUGIN
+  10 {
+    extensionName = MediaUpload
+    pluginName = Delete
+  }
 }

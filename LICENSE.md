@@ -1,7 +1,11 @@
 ### Copyright notice
 
+> Original Project by:
 > (c) Fabien Udriot <fabien@ecodev.ch>
 > All rights reserved
+
+> Update to TYPO3 v13 by:
+> i-kiu (www.i-kiu.at)
 
 This repository is part of the TYPO3 project. The TYPO3 project is
 free software; you can redistribute it and/or modify

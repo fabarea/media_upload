@@ -8,140 +8,146 @@ namespace Fab\MediaUpload\ViewHelpers\Widget;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use Fab\MediaUpload\Service\UploadFileService;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3\CMS\Core\View\ViewFactoryData;
+use TYPO3\CMS\Core\View\ViewFactoryInterface;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
 
 /**
  * Widget which displays a media upload.
  */
 class UploadViewHelper extends AbstractViewHelper
 {
-    public function initializeArguments()
+
+    protected $escapeOutput = false;
+
+    protected array $settings;
+
+    public function __construct(
+        protected ViewFactoryInterface $viewFactory,
+        ConfigurationManagerInterface $configurationManager
+    )
     {
-        $this->registerArgument(
-            'allowedExtensions',
-            'string',
-            'Allowed extension to be uploaded.',
-            false,
-            '',
-        )
-            ->registerArgument(
-                'maximumSize',
-                'int',
-                'Maximum file size in Mo by default.',
-                false,
-                0,
-            )
-            ->registerArgument(
-                'sizeUnit',
-                'string',
-                'Whether it is Ko or Mo.',
-                false,
-                'Mo',
-            )
-            ->registerArgument(
-                'storage',
-                'int',
-                'The final storage identifier to which the file will be added eventually.',
-                true,
-            )
-            ->registerArgument(
-                'maximumItems',
-                'int',
-                'Maximum items to be uploaded',
-                false,
-                10,
-            )
-            ->registerArgument(
-                'property',
-                'int',
-                'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields',
-                false,
-                '',
-            );
-    }
-
-    #public function render(): string
-    #{
-    #    $uploadFileService = GeneralUtility::makeInstance(
-    #        UploadFileService::class,
-    #    );
-    #    return static::renderStatic(
-    #        [
-    #            'allowedExtensions' => $this->arguments['allowedExtensions'],
-    #            'maximumSize' => $this->arguments['maximumSize'],
-    #            'maximumSizeLabel' => 'qwer' . self::getMaximumSizeLabel(
-    #                (int) $this->arguments['maximumSize'],
-    #            ),
-    #            'sizeUnit' => $this->arguments['sizeUnit'],
-    #            'storage' => $this->arguments['storage'],
-    #            'maximumItems' => $this->arguments['maximumItems'],
-    #            'property' => $this->arguments['property'],
-    #            'uploadedFileList' => $uploadFileService->getUploadedFileList(
-    #                $this->arguments['property'],
-    #            ),
-    #            'widgetIdentifier' => uniqid(),
-    #        ],
-    #        $this->buildRenderChildrenClosure(),
-    #        $this->renderingContext,
-    #    );
-    #}
-
-    public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): string {
-
-        $uploadFileService = GeneralUtility::makeInstance(
-            UploadFileService::class,
+        $this->settings = $configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'MediaUpload',
+            'Upload'
         );
-
-        $arguments['maximumSizeLabel'] = self::getMaximumSizeLabel(
-            (int)$arguments['maximumSize'],
-        );
-
-        if ($arguments['maximumSize'] === 0) {
-            $arguments['maximumSize'] = GeneralUtility::getMaxUploadFileSize() * 1024;
-        }
-
-        $arguments['uploadedFileList'] = $uploadFileService->getUploadedFileList(
-            $arguments['property'],
-        );
-
-        $arguments['widgetIdentifier'] = uniqid();
-        /** @var StandaloneView $view */
-        $view = GeneralUtility::makeInstance(StandaloneView::class);
-
-        $view->setTemplatePathAndFilename(
-            'EXT:media_upload/Resources/Private/Templates/ViewHelpers/Widget/Upload/Index.html',
-        );
-        $view->assignMultiple($arguments);
-        return $view->render();
-    }
-
-    public static function getMaximumSizeLabel(int $maximumSize = 0): int
-    {
-        $maximumSizeLabel = GeneralUtility::getMaxUploadFileSize() / 1024;
-        if ($maximumSize > 0) {
-            $maximumSizeLabel = $maximumSize;
-        }
-
-        return (int) $maximumSizeLabel;
     }
 
     /**
-     * @param string $property
+     * @return void
+     * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception
+     */
+    public function initializeArguments()
+    {
+        $this->registerArgument('allowedExtensions', 'string', 'Allowed extension to be uploaded.', FALSE, '');
+        $this->registerArgument('maximumSize', 'int', 'Maximum file size in Mo by default.', FALSE, 0);
+        $this->registerArgument('sizeUnit', 'string', 'Whether it is Ko or Mo.', FALSE, 'Mo');
+        $this->registerArgument('storage', 'int', 'The final storage identifier to which the file will be added eventually.', TRUE);
+        $this->registerArgument('maximumItems', 'int', 'Maximum items to be uploaded', FALSE, 10);
+        $this->registerArgument('property', 'int', 'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields', FALSE, '');
+    }
+
+    /**
+     * Compute the maximum size allowed to be uploaded.
+     * Return a value in bytes.
+     *
+     * @return int
+     */
+    public function getMaximumSizeLabel()
+    {
+
+        $maximumSize = GeneralUtility::getMaxUploadFileSize() / 1024;
+        if (!empty($this->arguments['maximumSize'])) {
+            $maximumSize = $this->arguments['maximumSize'];
+        }
+
+        return $maximumSize;
+    }
+
+    /**
+     * Compute the maximum size allowed to be uploaded.
+     * Return a value in bytes.
+     *
+     * @return int
+     */
+    public function getMaximumSize()
+    {
+
+        $maximumSize = GeneralUtility::getMaxUploadFileSize() * 1024;
+        if (!empty($this->arguments['maximumSize'])) {
+            $maximumSize = $this->arguments['maximumSize'];
+
+            if ($this->arguments['sizeUnit'] === 'Ko') {
+                $maximumSize = $maximumSize * 1024;
+            } else {
+                $maximumSize = $maximumSize * pow(1024, 2);
+            }
+        }
+
+        return $maximumSize;
+    }
+
+    /**
+     * Compute the allowed extensions to be uploaded.
+     *
      * @return string
      */
-    public static function getUploadedFileList($property = ''): string
+    public function getAllowedExtensions()
     {
-        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_upload');
-        return empty($parameters['uploadedFiles'][$property])
-            ? ''
-            : $parameters['uploadedFiles'][$property];
+        $allowedExtensions = '';
+
+        if (!empty($this->arguments['allowedExtensions'])) {
+            $allowedExtensions = GeneralUtility::trimExplode(',', $this->arguments['allowedExtensions'], TRUE);
+        } elseif ($this->arguments['storage'] > 0 && ExtensionManagementUtility::isLoaded('media')) {
+            $allowedExtensions = PermissionUtility::getInstance()->getAllowedExtensions($this->arguments['storage']);
+        }
+
+        // Format to be eventually consumed by JavaScript.
+        if (!empty($allowedExtensions)) {
+            $allowedExtensions = implode("','", $allowedExtensions);
+        }
+
+        return $allowedExtensions;
+    }
+
+    /**
+     * Returns an carousel widget
+     *
+     * @return string
+     */
+    public function render()
+    {
+        # generate a standalone view and render the template ViewHelpers/Widget/Upload/Index.html
+        $viewFactoryData = new ViewFactoryData(
+            templateRootPaths: $this->settings["view"]["templateRootPaths"],
+            partialRootPaths: $this->settings["view"]["partialRootPaths"],
+            layoutRootPaths: $this->settings["view"]["layoutRootPaths"],
+        );
+
+        $view = $this->viewFactory->create($viewFactoryData);
+
+        $allowedExtensions = $this->arguments['allowedExtensions'];
+        # check if str contains comma
+        if (!empty($allowedExtensions) && str_contains($allowedExtensions, ',')) {
+            # replace all , with ','
+            $allowedExtensions = str_replace(',', "','", $allowedExtensions);
+        }
+
+        $view->assignMultiple([
+            'uniqueId' => uniqid(),
+            'allowedExtensions' => $allowedExtensions,
+            'maximumSizeLabel' => $this->arguments['maximumSize'],
+            'sizeUnit' => $this->arguments['sizeUnit'],
+            'storage' => $this->arguments['storage'],
+            'maximumItems' => $this->arguments['maximumItems'],
+            'property' => $this->arguments['property'],
+        ]);
+
+        return $view->render("Upload.html");
     }
 }

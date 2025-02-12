@@ -8834,6 +8834,10 @@ qq.DeleteFileAjaxRequester = function(o) {
                 additionalOptions[options.uuidParamName] = uuid;
                 requester.initTransport(id)
                     .withParams(additionalOptions)
+                    .withQueryParams({
+                      "type": "1386871774",
+                      [options.uuidParamName]: uuid,
+                    })
                     .send();
             }
         }

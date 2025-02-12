@@ -23,7 +23,7 @@ class UuidUtility implements SingletonInterface
      * @return UuidUtility
      * @throws \InvalidArgumentException
      */
-    static public function getInstance()
+    static public function getInstance(): UuidUtility
     {
         return GeneralUtility::makeInstance(self::class);
     }
@@ -32,7 +32,7 @@ class UuidUtility implements SingletonInterface
      * @param string $uuid
      * @return bool
      */
-    public function isValid($uuid)
+    public function isValid(string $uuid): bool
     {
         return preg_match('/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/', $uuid);
     }
