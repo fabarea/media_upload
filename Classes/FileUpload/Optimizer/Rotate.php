@@ -72,7 +72,7 @@ class Rotate implements ImageOptimizerInterface
      * @param string $filename
      * @return integer
      */
-    protected function getOrientation($filename)
+    protected function getOrientation(string $filename): int
     {
         $extension = strtolower(substr($filename, strrpos($filename, '.') + 1));
         $orientation = 1; // Fallback to "straight"
@@ -92,7 +92,7 @@ class Rotate implements ImageOptimizerInterface
      * @return integer
      * @see http://www.impulseadventure.com/photo/exif-orientation.html
      */
-    protected function isRotated($orientation)
+    protected function isRotated(int $orientation)
     {
         $ret = FALSE;
         switch ($orientation) {
@@ -115,7 +115,7 @@ class Rotate implements ImageOptimizerInterface
      * @param integer $orientation
      * @return string
      */
-    protected function getTransformation($orientation)
+    protected function getTransformation(int $orientation): string
     {
         $transformation = '';
         if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['im_version_5'] !== 'gm') {
@@ -159,7 +159,7 @@ class Rotate implements ImageOptimizerInterface
      * @return void
      * @see http://sylvana.net/jpegcrop/exif_orientation.html
      */
-    protected function resetOrientation($filename)
+    protected function resetOrientation(string $filename)
     {
         JpegExifOrient::setOrientation($filename, 1);
     }

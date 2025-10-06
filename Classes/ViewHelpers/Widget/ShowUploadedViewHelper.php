@@ -19,6 +19,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class ShowUploadedViewHelper extends AbstractViewHelper
 {
+    protected $escapeOutput = false;
+
     /**
      * @return void
      */
@@ -26,43 +28,32 @@ class ShowUploadedViewHelper extends AbstractViewHelper
     {
         $this->registerArgument(
             'property',
-            'int',
+            'string',
             'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields',
             false,
-            '',
+            ''
         );
     }
-    #public function render(): string
-    #{
-    #    $uploadFileService = GeneralUtility::makeInstance(
-    #        UploadFileService::class,
-    #    );
-    #
-    #    return static::renderStatic(
-    #        [
-    #            'property' => $this->arguments['property'],
-    #            'uploadedFileList' => $uploadFileService->getUploadedFileList(
-    #                $this->arguments['property'],
-    #            ),
-    #            'uploadedFiles' => $uploadFileService->getUploadedFiles(
-    #                $this->arguments['property'],
-    #            ),
-    #        ],
-    #        $this->buildRenderChildrenClosure(),
-    #        $this->renderingContext,
-    #    );
-    #}
 
     public static function renderStatic(
         array $arguments,
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ): string {
+        $uploadFileService = GeneralUtility::makeInstance(UploadFileService::class);
+
+        $arguments['uploadedFileList'] = $uploadFileService->getUploadedFileList(
+            $arguments['property']
+        );
+        $arguments['uploadedFiles'] = $uploadFileService->getUploadedFiles(
+            $arguments['property']
+        );
+
         /** @var StandaloneView $view */
         $view = GeneralUtility::makeInstance(StandaloneView::class);
 
         $view->setTemplatePathAndFilename(
-            'EXT:media_upload/Resources/Private/Templates/ViewHelpers/Widget/ShowUploaded/Index.html',
+            'EXT:media_upload/Resources/Private/Templates/ViewHelpers/Widget/ShowUploaded/Index.html'
         );
         $view->assignMultiple($arguments);
         return $view->render();

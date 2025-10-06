@@ -58,7 +58,8 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         }
 
         // Remove the mime-type header
-        $data = reset(array_reverse(explode('base64,', $encodedImage)));
+        $array = array_reverse(explode('base64,', $encodedImage));
+        $data = reset($array);
 
         // Use strict mode to prevent characters from outside the base64 range
         $this->image = base64_decode($data, true);
@@ -76,7 +77,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      * @return boolean TRUE on success
      * @throws RuntimeException
      */
-    public function save()
+    public function save(): bool
     {
 
         if (is_null($this->uploadFolder)) {

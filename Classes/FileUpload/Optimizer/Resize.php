@@ -76,13 +76,13 @@ class Resize implements ImageOptimizerInterface
     /**
      * Resize an image according to given parameter.
      *
-     * @throws \Exception
      * @param string $fileNameAndPath
      * @param int $width
      * @param int $height
      * @return void
+     *@throws \Exception
      */
-    public function resize($fileNameAndPath, $width = 0, $height = 0)
+    public function resize(string $fileNameAndPath, int $width = 0, int $height = 0)
     {
 
         // Skip profile of the image
@@ -104,11 +104,11 @@ class Resize implements ImageOptimizerInterface
     /**
      * Escapes a file name so it can safely be used on the command line.
      *
-     * @see \TYPO3\CMS\Core\Imaging\GraphicalFunctions
      * @param string $inputName filename to safeguard, must not be empty
-     * @return string $inputName escaped as needed
+          * @return string $inputName escaped as needed
+     *@see \TYPO3\CMS\Core\Imaging\GraphicalFunctions
      */
-    protected function wrapFileName($inputName)
+    protected function wrapFileName(string $inputName): string
     {
         $currentLocale = '';
         if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem']) {
