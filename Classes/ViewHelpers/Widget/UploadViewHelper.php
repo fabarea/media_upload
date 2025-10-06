@@ -72,8 +72,19 @@ class UploadViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ): string {
 
+        // Get request parameters from rendering context if available, otherwise fallback to superglobals
+        $requestParameters = [];
+        $request = $renderingContext->getRequest();
+        if ($request && method_exists($request, 'getQueryParams') && method_exists($request, 'getParsedBody')) {
+            // Modern PSR-7 request approach
+            $queryParams = $request->getQueryParams();
+            $postParams = $request->getParsedBody() ?? [];
+            $requestParameters = array_merge($queryParams, $postParams); // POST takes precedence
+        }
+
         $uploadFileService = GeneralUtility::makeInstance(
-            UploadFileService::class
+            UploadFileService::class,
+            $requestParameters
         );
 
         $arguments['maximumSizeLabel'] = self::getMaximumSizeLabel(
@@ -116,7 +127,11 @@ class UploadViewHelper extends AbstractViewHelper
      */
     public static function getUploadedFileList(string $property = ''): string
     {
-        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_upload');
+        // Fallback to direct superglobal access to avoid deprecated method
+        $getParams = $_GET['tx_mediaupload_upload'] ?? [];
+        $postParams = $_POST['tx_mediaupload_upload'] ?? [];
+        $parameters = array_merge($getParams, $postParams); // POST takes precedence
+
         return empty($parameters['uploadedFiles'][$property])
             ? ''
             : $parameters['uploadedFiles'][$property];

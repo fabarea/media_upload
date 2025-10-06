@@ -17,6 +17,20 @@ use Fab\MediaUpload\UploadedFile;
  */
 class UploadFileService
 {
+    /**
+     * @var array
+     */
+    protected $requestParameters = [];
+
+    /**
+     * Constructor to inject request parameters
+     *
+     * @param array $requestParameters
+     */
+    public function __construct(array $requestParameters = [])
+    {
+        $this->requestParameters = $requestParameters;
+    }
 
     /**
      * Return the list of uploaded files.
@@ -26,7 +40,16 @@ class UploadFileService
      */
     public function getUploadedFileList($property = '')
     {
-        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_upload');
+        // Use injected parameters or fallback to legacy method for backwards compatibility
+        if (!empty($this->requestParameters)) {
+            $parameters = $this->requestParameters['tx_mediaupload_upload'] ?? [];
+        } else {
+            // Fallback for backwards compatibility - direct access to superglobals
+            $getParams = $_GET['tx_mediaupload_upload'] ?? [];
+            $postParams = $_POST['tx_mediaupload_upload'] ?? [];
+            $parameters = array_merge($getParams, $postParams); // POST takes precedence
+        }
+
         return empty($parameters['uploadedFiles'][$property]) ? '' : $parameters['uploadedFiles'][$property];
     }
 
@@ -61,7 +84,8 @@ class UploadFileService
                 throw new \RuntimeException($message, 1389550006);
             }
 
-            $fileSize = round(filesize($sanitizedFileNameAndPath) / 1000);
+            $fileSize = filesize($sanitizedFileNameAndPath);
+            $fileSize = $fileSize !== false ? round($fileSize / 1000) : 0;
 
             /** @var UploadedFile $uploadedFile */
             $uploadedFile = GeneralUtility::makeInstance(UploadedFile::class);
@@ -127,5 +151,4 @@ class UploadFileService
     {
         return count(GeneralUtility::trimExplode(',', $this->getUploadedFileList($property), TRUE));
     }
-
 }

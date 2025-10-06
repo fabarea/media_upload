@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\Security\FileNameValidator;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 
 /**
  * Class that encapsulates the file-upload internals
@@ -53,18 +54,25 @@ class UploadManager
     protected $inputName = 'qqfile';
 
     /**
+     * @var array
+     */
+    protected $requestParameters = [];
+
+    /**
      * @param \TYPO3\CMS\Core\Resource\ResourceStorage $storage
+     * @param array $requestParameters
      * @return UploadManager
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function __construct($storage = null)
+    public function __construct($storage = null, array $requestParameters = [])
     {
         $this->checkServerSettings();
 
         // max file size in bytes
         $this->sizeLimit = GeneralUtility::getMaxUploadFileSize() * 1024;
         $this->storage = $storage;
+        $this->requestParameters = $requestParameters;
     }
 
     /**
@@ -277,8 +285,8 @@ class UploadManager
 
             $fileExtensionPermissions = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class) ->get('media_upload');
 
-            $allow = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['fileExtensionsAllow']));
-            $deny = GeneralUtility::uniqueList(strtolower($fileExtensionPermissions['fileExtensionsDeny']));
+            $allow = StringUtility::uniqueList(strtolower($fileExtensionPermissions['fileExtensionsAllow']));
+            $deny = StringUtility::uniqueList(strtolower($fileExtensionPermissions['fileExtensionsDeny']));
             $fileExtension = $this->getFileExtension($fileName);
             if ($fileExtension !== '') {
                 // If the extension is found amongst the allowed types, we return true immediately
@@ -395,7 +403,15 @@ class UploadManager
         if ($this->uploadFolder === null) {
             $this->uploadFolder = \TYPO3\CMS\Core\Core\Environment::getPublicPath() . '/' . self::UPLOAD_FOLDER;
 
-            $possibleSubFolder = GeneralUtility::_GP('qquuid');
+            // Use injected request parameters or fallback to superglobals for backwards compatibility
+            $possibleSubFolder = null;
+            if (!empty($this->requestParameters)) {
+                $possibleSubFolder = $this->requestParameters['qquuid'] ?? null;
+            } else {
+                // Fallback to direct superglobal access
+                $possibleSubFolder = $_GET['qquuid'] ?? $_POST['qquuid'] ?? null;
+            }
+
             if (UuidUtility::getInstance()->isValid($possibleSubFolder)) {
                 $this->uploadFolder = $this->uploadFolder . DIRECTORY_SEPARATOR . $possibleSubFolder;
             }

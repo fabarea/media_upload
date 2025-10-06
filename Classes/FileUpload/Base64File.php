@@ -43,14 +43,20 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
     protected $extension;
 
     /**
+     * @param array $postData
      * @return \Fab\MediaUpload\FileUpload\Base64File
      * @throws RuntimeException
      */
-    public function __construct()
+    public function __construct(array $postData = [])
     {
 
         // Processes the encoded image data and returns the decoded image
-        $encodedImage = GeneralUtility::_POST($this->inputName);
+        $encodedImage = $postData[$this->inputName] ?? $_POST[$this->inputName] ?? '';
+
+        if (empty($encodedImage)) {
+            throw new RuntimeException('No image data provided', 1469376025);
+        }
+
         if (preg_match('/^data:image\/(jpg|jpeg|png)/i', $encodedImage, $matches)) {
             $this->extension = $matches[1];
         } else {

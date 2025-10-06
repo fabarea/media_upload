@@ -71,7 +71,7 @@ class MediaUploadController extends ActionController
      */
     public function deleteAction(): string
     {
-        $folderIdentifier = GeneralUtility::_POST('qquuid');
+        $folderIdentifier = $this->request->getParsedBody()['qquuid'] ?? '';
 
         $error = '';
 
