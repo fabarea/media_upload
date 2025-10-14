@@ -11,6 +11,9 @@ namespace Fab\MediaUpload\Controller;
 use Fab\MediaUpload\FileUpload\UploadManager;
 use Fab\MediaUpload\Utility\UuidUtility;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Http\Response;
+use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\Resource\Exception;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -69,7 +72,7 @@ class MediaUploadController extends ActionController
     /**
      * Delete a file being just uploaded.
      */
-    public function deleteAction(): string
+    public function deleteAction(): ResponseInterface
     {
         $folderIdentifier = $this->request->getParsedBody()['qquuid'] ?? '';
 
@@ -98,13 +101,21 @@ class MediaUploadController extends ActionController
             throw new \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException('File operation failed: ' . $error, 1387123456);
         }
 
-        return json_encode(['success' => true]);
+        $jsonResponse = json_encode(['success' => true]);
+
+        $body = new Stream('php://temp', 'rw');
+        $body->write($jsonResponse);
+
+        return (new Response())
+            ->withHeader('content-type', 'application/json; charset=utf-8')
+            ->withBody($body)
+            ->withStatus(200);
     }
 
     /**
      * Handle file upload.
      */
-    public function uploadAction(int $storageIdentifier): string
+    public function uploadAction(int $storageIdentifier): ResponseInterface
     {
         /** @var ResourceFactory $factory */
         $factory = GeneralUtility::makeInstance(ResourceFactory::class) ;
@@ -125,7 +136,15 @@ class MediaUploadController extends ActionController
             $result = ['error' => $e->getMessage()];
         }
 
-        return json_encode($result);
+        $jsonResponse = json_encode($result);
+
+        $body = new Stream('php://temp', 'rw');
+        $body->write($jsonResponse);
+
+        return (new Response())
+            ->withHeader('content-type', 'application/json; charset=utf-8')
+            ->withBody($body)
+            ->withStatus(200);
     }
 
     /**
