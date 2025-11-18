@@ -21,17 +21,15 @@ class ShowUploadedController extends AbstractWidgetController
      */
     protected $uploadFileService;
 
-    /**
-     * @param \Fab\MediaUpload\Service\UploadFileService $uploadFileService
-     */
-    public function injectController(\Fab\MediaUpload\Service\UploadFileService $uploadFileService ) {
-        $this->uploadFileService = $uploadFileService ;
+    public function __construct(\Fab\MediaUpload\Service\UploadFileService $uploadFileService)
+    {
+        $this->uploadFileService = $uploadFileService;
     }
 
     /**
      * @return void
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $property = $this->widgetConfiguration['property'];
         $this->view->assign('property', $property);

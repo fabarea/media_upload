@@ -25,13 +25,12 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
  */
 class MediaUploadController extends ActionController
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
 
-    public function injectEventDispatcher(EventDispatcherInterface $eventDispatcher): void
+    protected EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
+        parent::__construct();
         $this->eventDispatcher = $eventDispatcher;
     }
 

@@ -8,10 +8,5 @@ call_user_func(static function () {
 
     // Possible Static TS loading
     if (!empty($configuration['autoload_typoscript'])) {
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
-            'media_upload',
-            'Configuration/TypoScript',
-            'Media upload'
-        );
     }
 });

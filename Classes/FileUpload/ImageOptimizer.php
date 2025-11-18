@@ -57,7 +57,7 @@ class ImageOptimizer implements SingletonInterface
      * @param string $className
      * @return void
      */
-    public function add($className)
+    public function add($className): void
     {
         $this->optimizers[] = $className;
     }
@@ -68,7 +68,7 @@ class ImageOptimizer implements SingletonInterface
      * @param string $className
      * @return void
      */
-    public function remove($className)
+    public function remove($className): void
     {
         if (in_array($className, $this->optimizers)) {
             $key = array_search($className, $this->optimizers);

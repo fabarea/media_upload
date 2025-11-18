@@ -118,7 +118,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         if (isset($GLOBALS['_SERVER']['CONTENT_LENGTH'])) {
             return (int)$GLOBALS['_SERVER']['CONTENT_LENGTH'];
         } else {
-            throw new RuntimeException('Getting content length is not supported.');
+            throw new RuntimeException('Getting content length is not supported.', 7658672952);
         }
     }
 
