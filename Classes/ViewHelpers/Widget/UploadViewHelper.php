@@ -19,76 +19,52 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class UploadViewHelper extends AbstractViewHelper
 {
-    public function initializeArguments()
+    protected $escapeOutput = false;
+
+    public function initializeArguments(): void
     {
         $this->registerArgument(
             'allowedExtensions',
             'string',
             'Allowed extension to be uploaded.',
             false,
-            '',
-        )
-            ->registerArgument(
-                'maximumSize',
-                'int',
-                'Maximum file size in Mo by default.',
-                false,
-                0,
-            )
-            ->registerArgument(
-                'sizeUnit',
-                'string',
-                'Whether it is Ko or Mo.',
-                false,
-                'Mo',
-            )
-            ->registerArgument(
-                'storage',
-                'int',
-                'The final storage identifier to which the file will be added eventually.',
-                true,
-            )
-            ->registerArgument(
-                'maximumItems',
-                'int',
-                'Maximum items to be uploaded',
-                false,
-                10,
-            )
-            ->registerArgument(
-                'property',
-                'int',
-                'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields',
-                false,
-                '',
-            );
+            ''
+        );
+        $this->registerArgument(
+            'maximumSize',
+            'int',
+            'Maximum file size in Mo by default.',
+            false,
+            0
+        );
+        $this->registerArgument(
+            'sizeUnit',
+            'string',
+            'Whether it is Ko or Mo.',
+            false,
+            'Mo'
+        );
+        $this->registerArgument(
+            'storage',
+            'int',
+            'The final storage identifier to which the file will be added eventually.',
+            true
+        );
+        $this->registerArgument(
+            'maximumItems',
+            'int',
+            'Maximum items to be uploaded',
+            false,
+            10
+        );
+        $this->registerArgument(
+            'property',
+            'string',
+            'The property name used for identifying and grouping uploaded files. Required if form contains multiple upload fields',
+            false,
+            ''
+        );
     }
-
-    #public function render(): string
-    #{
-    #    $uploadFileService = GeneralUtility::makeInstance(
-    #        UploadFileService::class,
-    #    );
-    #    return static::renderStatic(
-    #        [
-    #            'allowedExtensions' => $this->arguments['allowedExtensions'],
-    #            'maximumSize' => $this->arguments['maximumSize'],
-    #            'maximumSizeLabel' => 'qwer' . self::getMaximumSizeLabel(
-    #                (int) $this->arguments['maximumSize'],
-    #            ),
-    #            'sizeUnit' => $this->arguments['sizeUnit'],
-    #            'storage' => $this->arguments['storage'],
-    #            'maximumItems' => $this->arguments['maximumItems'],
-    #            'property' => $this->arguments['property'],
-    #            'uploadedFileList' => $uploadFileService->getUploadedFileList(
-    #                $this->arguments['property'],
-    #            ),
-    #            'widgetIdentifier' => uniqid(),
-    #        ],
-    #        $this->buildRenderChildrenClosure(),
-    #        $this->renderingContext,
-    #    );
-    #}
 
     public static function renderStatic(
         array $arguments,
@@ -96,12 +72,23 @@ class UploadViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ): string {
 
+        // Get request parameters from rendering context if available, otherwise fallback to superglobals
+        $requestParameters = [];
+        $request = $renderingContext->getRequest();
+        if ($request && method_exists($request, 'getQueryParams') && method_exists($request, 'getParsedBody')) {
+            // Modern PSR-7 request approach
+            $queryParams = $request->getQueryParams();
+            $postParams = $request->getParsedBody() ?? [];
+            $requestParameters = array_merge($queryParams, $postParams); // POST takes precedence
+        }
+
         $uploadFileService = GeneralUtility::makeInstance(
             UploadFileService::class,
+            $requestParameters
         );
 
         $arguments['maximumSizeLabel'] = self::getMaximumSizeLabel(
-            (int)$arguments['maximumSize'],
+            (int)$arguments['maximumSize']
         );
 
         if ($arguments['maximumSize'] === 0) {
@@ -109,15 +96,16 @@ class UploadViewHelper extends AbstractViewHelper
         }
 
         $arguments['uploadedFileList'] = $uploadFileService->getUploadedFileList(
-            $arguments['property'],
+            $arguments['property']
         );
 
         $arguments['widgetIdentifier'] = uniqid();
+
         /** @var StandaloneView $view */
         $view = GeneralUtility::makeInstance(StandaloneView::class);
 
         $view->setTemplatePathAndFilename(
-            'EXT:media_upload/Resources/Private/Templates/ViewHelpers/Widget/Upload/Index.html',
+            'EXT:media_upload/Resources/Private/Templates/ViewHelpers/Widget/Upload/Index.html'
         );
         $view->assignMultiple($arguments);
         return $view->render();
@@ -137,9 +125,13 @@ class UploadViewHelper extends AbstractViewHelper
      * @param string $property
      * @return string
      */
-    public static function getUploadedFileList($property = ''): string
+    public static function getUploadedFileList(string $property = ''): string
     {
-        $parameters = GeneralUtility::_GPmerged('tx_mediaupload_upload');
+        // Fallback to direct superglobal access to avoid deprecated method
+        $getParams = $_GET['tx_mediaupload_upload'] ?? [];
+        $postParams = $_POST['tx_mediaupload_upload'] ?? [];
+        $parameters = array_merge($getParams, $postParams); // POST takes precedence
+
         return empty($parameters['uploadedFiles'][$property])
             ? ''
             : $parameters['uploadedFiles'][$property];

@@ -43,14 +43,20 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
     protected $extension;
 
     /**
+     * @param array $postData
      * @return \Fab\MediaUpload\FileUpload\Base64File
      * @throws RuntimeException
      */
-    public function __construct()
+    public function __construct(array $postData = [])
     {
 
         // Processes the encoded image data and returns the decoded image
-        $encodedImage = GeneralUtility::_POST($this->inputName);
+        $encodedImage = $postData[$this->inputName] ?? $_POST[$this->inputName] ?? '';
+
+        if (empty($encodedImage)) {
+            throw new RuntimeException('No image data provided', 1469376025);
+        }
+
         if (preg_match('/^data:image\/(jpg|jpeg|png)/i', $encodedImage, $matches)) {
             $this->extension = $matches[1];
         } else {
@@ -58,7 +64,8 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         }
 
         // Remove the mime-type header
-        $data = reset(array_reverse(explode('base64,', $encodedImage)));
+        $array = array_reverse(explode('base64,', $encodedImage));
+        $data = reset($array);
 
         // Use strict mode to prevent characters from outside the base64 range
         $this->image = base64_decode($data, true);
@@ -76,7 +83,7 @@ class Base64File extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
      * @return boolean TRUE on success
      * @throws RuntimeException
      */
-    public function save()
+    public function save(): bool
     {
 
         if (is_null($this->uploadFolder)) {

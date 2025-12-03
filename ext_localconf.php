@@ -1,15 +1,16 @@
 <?php
 
-
 use Fab\MediaUpload\Controller\MediaUploadController;
 
-if (!defined('TYPO3_MODE')) die ('Access denied.');
+defined('TYPO3') or die();
 
-call_user_func(function () {
+call_user_func(static function () {
 
-    $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class) ->get('media_upload');
+    $configuration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
+    )->get('media_upload');
 
-    if (false === isset($configuration['autoload_typoscript']) || true === (bool)$configuration['autoload_typoscript']) {
+    if (!isset($configuration['autoload_typoscript']) || !empty($configuration['autoload_typoscript'])) {
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
             'media_upload',
             'constants',
@@ -45,7 +46,7 @@ call_user_func(function () {
             MediaUploadController::class => 'delete',
         ]
     );
-    // command line is replaced by symphony command:
-    // ./vendor/bin/typo3cms mediaupload:removeTempFiles rundry=1
+    // command line is replaced by symfony command:
+    // ./vendor/bin/typo3 mediaupload:removeTempFiles rundry=1
 
 });

@@ -1,6 +1,6 @@
 <?php
 
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['media_upload'] = [
     'title' => 'Media Upload',
     'description' => 'Fluid widget for mass uploading files on the Frontend using HTML5 techniques powered by Fine Uploader - http://fineuploader.com/',
     'category' => 'fe',
@@ -14,7 +14,7 @@ $EM_CONF[$_EXTKEY] = [
         [
             'depends' =>
                 [
-                    'typo3' => '11.5.0-11.5.99',
+                    'typo3' => '12.4.0-12.4.99',
                 ],
             'conflicts' =>
                 [

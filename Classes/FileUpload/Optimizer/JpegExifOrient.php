@@ -53,7 +53,7 @@ class JpegExifOrient
      * @return void
      * @throws \RuntimeException
      */
-    public static function setOrientation($filename, $orientation)
+    public static function setOrientation(string $filename, int $orientation)
     {
         $exif_data = array();    // Buffer
         $offsetJfif = 0;
@@ -242,7 +242,7 @@ class JpegExifOrient
      * @return integer
      * @throws \RuntimeException
      */
-    protected static function read_1_byte($handle)
+    protected static function read_1_byte($handle): int
     {
         $c = fgetc($handle);
         if ($c === FALSE) {
@@ -259,7 +259,7 @@ class JpegExifOrient
      * @return integer
      * @throws \RuntimeException
      */
-    protected static function read_2_bytes($handle)
+    protected static function read_2_bytes($handle): int
     {
         $c1 = fgetc($handle);
         if ($c1 === FALSE) {
