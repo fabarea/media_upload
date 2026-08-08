@@ -9,8 +9,9 @@ namespace Fab\MediaUpload\Service;
  */
 
 use Fab\MediaUpload\FileUpload\UploadManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Fab\MediaUpload\UploadedFile;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Uploaded files service.
@@ -120,7 +121,14 @@ class UploadFileService
         } elseif (count($pathSegments) === 1 && strpos($uploadedFileName, '..') === false) {
             $sanitizedFileNameAndPath = UploadManager::UPLOAD_FOLDER . $pathSegments[0];
         }
-        return $sanitizedFileNameAndPath;
+
+        if ($sanitizedFileNameAndPath === '') {
+            return '';
+        }
+
+        // Resolve against public path (eID/CLI cwd is not always htdocs/).
+        $absolutePath = Environment::getPublicPath() . '/' . ltrim($sanitizedFileNameAndPath, '/');
+        return is_file($absolutePath) ? $absolutePath : $sanitizedFileNameAndPath;
     }
 
     /**
