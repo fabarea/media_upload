@@ -87,7 +87,7 @@ class StreamedFile extends \Fab\MediaUpload\FileUpload\UploadedFileAbstract
         if (isset($GLOBALS['_SERVER']['CONTENT_LENGTH'])) {
             return (int)$GLOBALS['_SERVER']['CONTENT_LENGTH'];
         } else {
-            throw new \Exception('Getting content length is not supported.');
+            throw new \Exception('Getting content length is not supported.', 7074423571);
         }
     }
 

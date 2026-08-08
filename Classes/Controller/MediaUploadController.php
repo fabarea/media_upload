@@ -10,7 +10,6 @@ namespace Fab\MediaUpload\Controller;
 
 use Fab\MediaUpload\FileUpload\UploadManager;
 use Fab\MediaUpload\Utility\UuidUtility;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Stream;
@@ -22,19 +21,12 @@ use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 /**
  * Controller which handles actions related to Asset.
+ *
+ * Note: Do not call parent::__construct() — ActionController has no constructor
+ * in TYPO3 v12/v13; EventDispatcher is injected via injectEventDispatcher().
  */
 class MediaUploadController extends ActionController
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    public function injectEventDispatcher(EventDispatcherInterface $eventDispatcher): void
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
     /**
      * Initialize actions. These actions are meant to be called by an logged-in FE User.
      */
@@ -43,17 +35,20 @@ class MediaUploadController extends ActionController
 
         // Perhaps it should go into a validator?
         // Check permission before executing any action.
-        $allowedFrontendGroups = trim($this->settings['allowedFrontendGroups']);
+        $allowedFrontendGroups = trim($this->settings['allowedFrontendGroups'] ?? '');
+        $frontendUser = $this->getFrontendUser();
+        $userData = is_array($frontendUser->user ?? null) ? $frontendUser->user : [];
+
         if ($allowedFrontendGroups === '*') {
-            if (empty($this->getFrontendUser()->user)) {
+            if ($userData === []) {
                 throw new Exception('FE User must be logged-in.', 1387696171);
             }
-        } elseif (!empty($allowedFrontendGroups)) {
+        } elseif ($allowedFrontendGroups !== '') {
 
             $isAllowed = false;
             $frontendGroups = GeneralUtility::trimExplode(',', $allowedFrontendGroups, true);
             foreach ($frontendGroups as $frontendGroup) {
-                if (GeneralUtility::inList($this->getFrontendUser()->user['usergroup'], $frontendGroup)) {
+                if (GeneralUtility::inList($userData['usergroup'] ?? '', $frontendGroup)) {
                     $isAllowed = true;
                     break;
                 }
@@ -152,6 +147,18 @@ class MediaUploadController extends ActionController
      */
     protected function getFrontendUser(): FrontendUserAuthentication
     {
-        return $GLOBALS['TSFE']->fe_user;
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        if ($request !== null) {
+            $frontendUser = $request->getAttribute('frontend.user');
+            if ($frontendUser instanceof FrontendUserAuthentication) {
+                return $frontendUser;
+            }
+        }
+
+        if (isset($GLOBALS['TSFE']->fe_user) && $GLOBALS['TSFE']->fe_user instanceof FrontendUserAuthentication) {
+            return $GLOBALS['TSFE']->fe_user;
+        }
+
+        return GeneralUtility::makeInstance(FrontendUserAuthentication::class);
     }
 }

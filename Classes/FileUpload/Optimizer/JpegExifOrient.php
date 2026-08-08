@@ -53,7 +53,7 @@ class JpegExifOrient
      * @return void
      * @throws \RuntimeException
      */
-    public static function setOrientation(string $filename, int $orientation)
+    public static function setOrientation(string $filename, int $orientation): void
     {
         $exif_data = array();    // Buffer
         $offsetJfif = 0;

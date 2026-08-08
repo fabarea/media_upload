@@ -21,22 +21,19 @@ class UploadController extends AbstractWidgetController
 
     /**
      * @var \Fab\MediaUpload\Service\UploadFileService
-     * @TYPO3\CMS\Extbase\Annotation\Inject
      */
     protected $uploadFileService;
 
 
-    /**
-     * @param \Fab\MediaUpload\Service\UploadFileService $uploadFileService
-     */
-    public function injectController(\Fab\MediaUpload\Service\UploadFileService $uploadFileService ) {
-        $this->uploadFileService = $uploadFileService ;
+    public function __construct(\Fab\MediaUpload\Service\UploadFileService $uploadFileService)
+    {
+        $this->uploadFileService = $uploadFileService;
     }
 
     /**
      * @return void
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->view->assign('allowedExtensions', $this->getAllowedExtensions());
         $this->view->assign('maximumSize', $this->getMaximumSize());
@@ -114,4 +111,5 @@ class UploadController extends AbstractWidgetController
 
         return $allowedExtensions;
     }
+
 }

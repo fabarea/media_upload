@@ -82,7 +82,7 @@ class Resize implements ImageOptimizerInterface
      * @return void
      *@throws \Exception
      */
-    public function resize(string $fileNameAndPath, int $width = 0, int $height = 0)
+    public function resize(string $fileNameAndPath, int $width = 0, int $height = 0): void
     {
 
         // Skip profile of the image
