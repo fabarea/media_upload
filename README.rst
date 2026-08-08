@@ -22,6 +22,27 @@ After a file has been uploaded, the user can validate and possibly remove it fro
 
 .. image:: https://raw.github.com/fabarea/media_upload/master/Documentation/Upload-02.png
 
+Compatibility and Maintenance
+=============================
+
+This package is currently maintained for the following versions:
+
+.. list-table::
+   :header-rows: 1
+
+   * - TYPO3 Version
+     - Package Version
+     - Branch
+     - Maintained
+   * - TYPO3 12.4.x / 13.4.x
+     - 4.x
+     - release/4.0.x
+     - Yes
+   * - TYPO3 11.5.x
+     - 3.x
+     - master
+     - No
+
 Installation
 ============
 
