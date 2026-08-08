@@ -1,3 +1,7 @@
+## 4.1.1 (2026-08-08)
+
+[BUGFIX] Resolve uploaded file paths against public path (eID/CLI cwd)
+
 ## 4.1.0 (2026-08-08)
 
 [FEATURE] Compatibility v13
