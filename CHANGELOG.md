@@ -1,3 +1,7 @@
+## 4.1.3 (2026-11-21)
+
+[TASK] Move addStaticFile to TCA/Overrides
+
 ## 4.1.2 (2026-11-21)
 
 [SECURITY] Fix path traversal via unanchored qquuid (upload/delete)
