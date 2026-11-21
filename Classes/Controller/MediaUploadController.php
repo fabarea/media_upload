@@ -11,11 +11,13 @@ namespace Fab\MediaUpload\Controller;
 use Fab\MediaUpload\FileUpload\UploadManager;
 use Fab\MediaUpload\Utility\UuidUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\Resource\Exception;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
@@ -69,18 +71,32 @@ class MediaUploadController extends ActionController
      */
     public function deleteAction(): ResponseInterface
     {
-        $folderIdentifier = $this->request->getParsedBody()['qquuid'] ?? '';
+        $parsedBody = $this->request->getParsedBody();
+        $folderIdentifier = is_array($parsedBody) ? ($parsedBody['qquuid'] ?? '') : '';
 
         $error = '';
 
-        // check uuid format
-        if (UuidUtility::getInstance()->isValid($folderIdentifier)){
+        // check uuid format (anchored; rejects "/", "\", "..", ":")
+        if (is_string($folderIdentifier) && UuidUtility::getInstance()->isValid($folderIdentifier)) {
 
             /** @var UploadManager $uploadManager */
-            $uploadManager = GeneralUtility::makeInstance(UploadManager::class);
+            $uploadManager = GeneralUtility::makeInstance(UploadManager::class, null, ['qquuid' => $folderIdentifier]);
             $uploadFolderPath = $uploadManager->getUploadFolder();
+            $baseUploadFolder = Environment::getPublicPath() . '/' . UploadManager::UPLOAD_FOLDER;
 
-            if (is_dir($uploadFolderPath)) {
+            $uploadCanonical = PathUtility::getCanonicalPath($uploadFolderPath);
+            $baseCanonical = PathUtility::getCanonicalPath($baseUploadFolder);
+            $basePrefix = rtrim(str_replace('\\', '/', $baseCanonical), '/') . '/';
+            $uploadNormalized = str_replace('\\', '/', $uploadCanonical);
+
+            // Must be a UUID sub-folder inside typo3temp/MediaUpload — never the base or outside.
+            $isSafeSubFolder = str_starts_with($uploadNormalized, $basePrefix)
+                && $uploadCanonical !== $baseCanonical
+                && !str_contains($uploadNormalized, '/../');
+
+            if (!$isSafeSubFolder) {
+                $error = 'File identifier is not correct';
+            } elseif (is_dir($uploadFolderPath)) {
                 $isRemoved = GeneralUtility::rmdir($uploadFolderPath, true);
                 if (!$isRemoved) {
                     $error = 'Permission problem? I could not perform this action.';

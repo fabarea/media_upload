@@ -1,3 +1,10 @@
+## 4.1.2 (2026-11-21)
+
+[SECURITY] Fix path traversal via unanchored qquuid (upload/delete)
+[SECURITY] Reject "/", "\", "..", ":" in qquuid and uploaded filenames
+[SECURITY] Constrain upload/delete paths to typo3temp/MediaUpload
+[SECURITY] Re-validate filename after normalization (NTFS ADS / FileNameValidator bypass)
+
 ## 4.1.1 (2026-08-08)
 
 [BUGFIX] Resolve uploaded file paths against public path (eID/CLI cwd)
