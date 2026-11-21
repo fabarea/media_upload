@@ -29,12 +29,27 @@ class UuidUtility implements SingletonInterface
     }
 
     /**
-     * @param string $uuid
+     * Validate a Fine Uploader UUID used as temporary sub-folder name.
+     *
+     * Must be an exact UUID-like token: no path separators, traversal, or NTFS
+     * stream markers (":") that could escape typo3temp/MediaUpload.
+     *
+     * @param mixed $uuid
      * @return bool
      */
     public function isValid($uuid)
     {
-        return preg_match('/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/', $uuid);
+        if (!is_string($uuid) || $uuid === '') {
+            return false;
+        }
+
+        // Reject path traversal / ADS markers even before the format check.
+        if (strpbrk($uuid, '/\\:') !== false || strpos($uuid, '..') !== false) {
+            return false;
+        }
+
+        // Anchored: the entire value must be the UUID (unanchored allowed "/../../..").
+        return (bool)preg_match('/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/', $uuid);
     }
 
 }

@@ -15,10 +15,12 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\Security\FileNameValidator;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 
 /**
@@ -203,16 +205,54 @@ class UploadManager
      *
      * @param UploadedFileInterface $uploadedFile
      * @return string
+     * @throws \RuntimeException
      */
     protected function getFileName(UploadedFileInterface $uploadedFile)
     {
-        $pathInfo = pathinfo($uploadedFile->getOriginalName());
-        $fileName = $this->sanitizeFileName($pathInfo['filename']);
+        $originalName = (string)$uploadedFile->getOriginalName();
+        // basename() drops any forged directory segment in Content-Disposition.
+        $originalName = basename($originalName);
+        $this->assertSafeFileName($originalName);
+
+        $pathInfo = pathinfo($originalName);
+        $fileName = $this->sanitizeFileName($pathInfo['filename'] ?? '');
         $fileNameWithExtension = $fileName;
         if (!empty($pathInfo['extension'])) {
-            $fileNameWithExtension = sprintf('%s.%s', $fileName, $pathInfo['extension']);
+            // Sanitize extension too (blocks e.g. "$DATA" / encoded junk after normalization).
+            $extension = $this->sanitizeFileName($pathInfo['extension']);
+            if ($extension === '') {
+                $this->throwException('Invalid file name.');
+            }
+            $fileNameWithExtension = sprintf('%s.%s', $fileName, $extension);
         }
+
+        // Re-validate the final name after normalization (FileNameValidator + path rules).
+        $this->assertSafeFileName($fileNameWithExtension);
+
         return $fileNameWithExtension;
+    }
+
+    /**
+     * Reject path traversal, NTFS ADS (":"), and empty / unsafe names.
+     *
+     * @param string $fileName
+     * @return void
+     * @throws \RuntimeException
+     */
+    protected function assertSafeFileName($fileName)
+    {
+        if (!is_string($fileName) || $fileName === '') {
+            $this->throwException('Invalid file name.');
+        }
+
+        if ($fileName !== basename($fileName)) {
+            $this->throwException('Invalid file name.');
+        }
+
+        // "/", "\", ":", ".." — path escape / Windows alternate data streams.
+        if (strpbrk($fileName, '/\\:') !== false || strpos($fileName, '..') !== false) {
+            $this->throwException('Invalid file name.');
+        }
     }
 
     /**
@@ -397,11 +437,13 @@ class UploadManager
     /**
      * @return string
      * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function getUploadFolder()
     {
         if ($this->uploadFolder === null) {
-            $this->uploadFolder = \TYPO3\CMS\Core\Core\Environment::getPublicPath() . '/' . self::UPLOAD_FOLDER;
+            $baseUploadFolder = Environment::getPublicPath() . '/' . self::UPLOAD_FOLDER;
+            $this->uploadFolder = $baseUploadFolder;
 
             // Use injected request parameters or fallback to superglobals for backwards compatibility
             $possibleSubFolder = null;
@@ -412,12 +454,42 @@ class UploadManager
                 $possibleSubFolder = $_GET['qquuid'] ?? $_POST['qquuid'] ?? null;
             }
 
-            if (UuidUtility::getInstance()->isValid($possibleSubFolder)) {
-                $this->uploadFolder = $this->uploadFolder . DIRECTORY_SEPARATOR . $possibleSubFolder;
+            if (is_string($possibleSubFolder) && UuidUtility::getInstance()->isValid($possibleSubFolder)) {
+                $candidate = $baseUploadFolder . DIRECTORY_SEPARATOR . $possibleSubFolder;
+                if (!$this->isPathInsideUploadBase($candidate, $baseUploadFolder)) {
+                    $this->throwException('Invalid upload path.');
+                }
+                $this->uploadFolder = $candidate;
             }
 
         }
         return $this->uploadFolder;
+    }
+
+    /**
+     * Ensure $path resolves under typo3temp/MediaUpload (no traversal escape).
+     *
+     * Uses canonical path comparison so non-existing UUID folders are still checked.
+     *
+     * @param string $path
+     * @param string $basePath
+     * @return bool
+     */
+    protected function isPathInsideUploadBase($path, $basePath)
+    {
+        $baseCanonical = PathUtility::getCanonicalPath($basePath);
+        $pathCanonical = PathUtility::getCanonicalPath($path);
+
+        if ($pathCanonical === $baseCanonical) {
+            return true;
+        }
+
+        $basePrefix = rtrim($baseCanonical, '/\\') . '/';
+        // Normalize to forward slashes for a stable prefix check on Windows too.
+        $basePrefix = str_replace('\\', '/', $basePrefix);
+        $pathNormalized = str_replace('\\', '/', $pathCanonical);
+
+        return str_starts_with($pathNormalized, $basePrefix);
     }
 
     /**
